@@ -28,3 +28,9 @@ x,y,z = sensor.read()
 ```
 
 The `read io` reference in the `main loop` section would now point to the newly added `read io` section and execute it on its next iteration, thus effectively modifying the realtime code while its running. This shows the basic principle behind `ntpy`.
+
+Install
+-------
+
+* Python: **3.9**
+* Install dependencies in [requirements.txt](./requirements.txt)
