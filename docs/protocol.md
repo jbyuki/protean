@@ -1,7 +1,7 @@
 Command
 =======
 
-```json
+```
 {
 	"cmd" :  string,
 	"data" : object
@@ -14,7 +14,7 @@ Command
 * `cmd` : `"execute"`
 * `data` :
 
-```json
+```
 {
 	"name": string,
 	"lines" : [string]
