@@ -16,8 +16,8 @@ Command
 
 ```json
 {
-	`name`: string,
-	`lines` : [string]
+	"name": string,
+	"lines" : [string]
 }
 ```
 
