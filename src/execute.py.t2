@@ -1,0 +1,118 @@
+;;; ntpy-server
+;; handle message
+if msg["cmd"] == "execute":
+	; check message format for execute
+	; add or replace section to database
+	; retangle all sections
+	; look for root section
+	; add or replace parent section to running sections
+
+;; check message format for execute
+data = msg["data"]
+assert("name" in data)
+assert("lines" in data)
+
+;; client variables
+sections = {}
+
+;; add or replace section to database
+name = data["name"]
+lines = data["lines"]
+sections[name] = lines
+
+;; client variables
+tangled = {}
+
+;; define functions
+def tangle_rec(name, sections, tangled, parent_section, blacklist):
+	; return if name in blacklist
+	; add name to blacklist
+	if name not in sections:
+		return []
+	if name in tangled:
+		return tangled[name]
+	lines = []
+	for line in sections[name]:
+		; if line is literate reference recurse
+		; otherwise just add line to list
+	tangled[name] = lines
+	; pop blacklist
+	return lines
+
+;; retangle all sections
+tangled = {}
+; clear retangling all
+blacklist = []
+for name in sections.keys():
+	tangle_rec(name, sections, tangled, parent_section, blacklist)
+
+;; if line is literate reference recurse
+if re.match("^\\s*;[^;].*", line):
+	; extract reference name
+	; push reference name to blacklist
+	; recurse and add lines from reference
+	; pop reference name from blacklist
+
+;; otherwise just add line to list
+else:
+	lines.append(line)
+
+;; imports
+import re
+
+;; extract reference name
+ref_name = re.match("^\\s*;([^;].*)", line)[1].strip()
+; add parent to reference
+
+;; add name to blacklist
+blacklist.append(name)
+
+;; pop blacklist
+blacklist.pop()
+
+;; return if name in blacklist
+if name in blacklist:
+	return []
+
+;; recurse and add lines from reference
+ref_lines = tangle_rec(ref_name, sections, tangled, parent_section, blacklist)
+for ref_line in ref_lines:
+	lines.append(ref_line)
+
+;; client variables
+parent_section = {}
+
+;; clear retangling all
+parent_section = {}
+
+;; add parent to reference
+if ref_name not in parent_section:
+	parent_section[ref_name] = []
+
+if name not in parent_section[ref_name]:
+	parent_section[ref_name].append(name)
+
+;; define functions
+def get_roots(name, parent_section, blacklist):
+	if name not in parent_section:
+		return [name]
+	; add name to blacklist
+	roots = []
+	for parent in parent_section[name]:
+		parent_roots = get_roots(parent)
+		for root in parent_roots:
+			roots.append(root)
+	; pop blacklist
+	return roots
+
+;; look for root section
+blacklist = []
+roots = get_roots(name, parent_section, blacklist)
+
+;; client variables
+running_queue = []
+
+;; add or replace parent section to running sections
+for root in roots:
+	if root not in running_queue:
+		running_queue.append(root)

@@ -1,13 +1,6 @@
-:: ./test_client.py
-; imports
-; variables
-; define functions
-
-;; imports
 import asyncio
 import json
 
-;; define functions
 async def start_client(host = "localhost", port=8089):
 	reader, writer = await asyncio.open_connection(host, port)
 
@@ -30,3 +23,4 @@ async def start_client(host = "localhost", port=8089):
 	writer.close()
 	await writer.wait_closed()
 	print("Client closed")
+

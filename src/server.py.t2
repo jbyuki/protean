@@ -1,5 +1,5 @@
 ;;; ntpy-server
-:: ../../ntpy/server.py
+:: ../ntpy/server.py
 ; imports
 ; variables
 ; define functions
@@ -10,15 +10,25 @@ import json
 
 ;; define functions
 async def start_server(host='localhost', port=8089):
-	server = await asyncio.start_server(handle_echo, host, port)
+	server = await asyncio.start_server(on_connect, host, port)
 	print(f"Server started on {port}")
 	async with server:
 		await server.serve_forever()
 
 ;; define functions
-async def handle_echo(reader, writer):
-	data = await reader.read(100)
-	obj = json.loads(data)
-	print(f"Received: {obj}")
+async def on_connect(reader, writer):
+	; client variables
+	while True:
+		data = await reader.readline()
+		if len(data) == 0:
+			break
+		msg = json.loads(data)
+		; check that message is well formed
+		; handle message
+
 	writer.close()
 	await writer.wait_closed()
+
+;; check that message is well formed
+assert("cmd" in msg)
+assert("data" in msg)

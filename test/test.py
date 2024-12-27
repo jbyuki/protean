@@ -1,9 +1,3 @@
-:: ./test.py
-; imports
-; functions
-; run async loop
-
-;; imports
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'ntpy'))
 import server
@@ -11,7 +5,8 @@ import threading
 import random
 import test_client
 
-;; functions
+import asyncio
+
 async def main():
 	server_task = asyncio.create_task(server.start_server())
 	asyncio.create_task(test_client.start_client())
@@ -23,8 +18,5 @@ async def main():
 	except asyncio.CancelledError:
 		pass
 
-;; imports
-import asyncio
-
-;; run async loop
 asyncio.run(main())
+
