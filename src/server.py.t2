@@ -3,6 +3,7 @@
 ; imports
 ; variables
 ; define functions
+; if standalone start server
 
 ;; imports
 import asyncio
@@ -23,8 +24,11 @@ async def on_connect(reader, writer):
 		if len(data) == 0:
 			break
 		msg = json.loads(data)
+		status = "Done"
 		; check that message is well formed
 		; handle message
+		; if not handeld fail
+		; send response back
 		await asyncio.sleep(0)
 
 	writer.close()
@@ -33,3 +37,24 @@ async def on_connect(reader, writer):
 ;; check that message is well formed
 assert("cmd" in msg)
 assert("data" in msg)
+
+;; send response back
+response = json.dumps({"status" : status}) + '\n'
+writer.write(response.encode())
+await writer.drain()
+
+;; if not handeld fail
+else:
+	status = f"Unknown command {msg["cmd"]}"
+
+;; if standalone start server
+
+if __name__ == "__main__":
+	async def main():
+		executor_task = asyncio.create_task(start_executor())
+		server_task = asyncio.create_task(start_server())
+		try:
+			await server_task
+		except asyncio.CancelledError:
+			pass
+	asyncio.run(main())

@@ -82,8 +82,10 @@ async def on_connect(reader, writer):
 		if len(data) == 0:
 			break
 		msg = json.loads(data)
+		status = "Done"
 		assert("cmd" in msg)
 		assert("data" in msg)
+
 		if msg["cmd"] == "execute":
 			data = msg["data"]
 			assert("name" in data)
@@ -103,9 +105,26 @@ async def on_connect(reader, writer):
 			if name != "loop":
 				pending_sections.append(name)
 
+		else:
+			status = f"Unknown command {msg["cmd"]}"
+
+		response = json.dumps({"status" : status}) + '\n'
+		writer.write(response.encode())
+		await writer.drain()
+
 		await asyncio.sleep(0)
 
 	writer.close()
 	await writer.wait_closed()
 
+
+if __name__ == "__main__":
+	async def main():
+		executor_task = asyncio.create_task(start_executor())
+		server_task = asyncio.create_task(start_server())
+		try:
+			await server_task
+		except asyncio.CancelledError:
+			pass
+	asyncio.run(main())
 

@@ -19,14 +19,30 @@ async def start_client(host = "localhost", port=8089):
 	writer.write(message.encode())
 	await writer.drain()
 
+	response = await reader.readline()
+	print(response)
+
 	message = json.dumps({"cmd" : "execute", "data" : {'name': "main", 'lines': [ "; print hello" ]}}) + '\n'
 	writer.write(message.encode())
 	await writer.drain()
+
+	response = await reader.readline()
+	print(response)
 
 	message = json.dumps({"cmd" : "execute", "data" : {'name': "print hello", 'lines': [ "print('hi')" ]}}) + '\n'
 	writer.write(message.encode())
 	await writer.drain()
 
+	response = await reader.readline()
+	print(response)
+
+	message = json.dumps({"cmd" : "bla", "data" : {'name': "print hello", 'lines': [ "print('hi')" ]}}) + '\n'
+	writer.write(message.encode())
+	await writer.drain()
+
+	response = await reader.readline()
+	print(response)
+	
 	writer.close()
 	await writer.wait_closed()
 	print("Client closed")
