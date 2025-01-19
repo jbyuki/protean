@@ -13,15 +13,17 @@ import test_client
 
 ;; functions
 async def main():
+	executor_task = asyncio.create_task(server.start_executor())
 	server_task = asyncio.create_task(server.start_server())
 	asyncio.create_task(test_client.start_client())
 	await asyncio.sleep(1)
-	print("Shutting down")
+	executor_task.cancel()
 	server_task.cancel()
 	try:
 		await server_task
 	except asyncio.CancelledError:
 		pass
+
 
 ;; imports
 import asyncio

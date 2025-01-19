@@ -25,6 +25,7 @@ async def on_connect(reader, writer):
 		msg = json.loads(data)
 		; check that message is well formed
 		; handle message
+		await asyncio.sleep(0)
 
 	writer.close()
 	await writer.wait_closed()

@@ -4,7 +4,6 @@ if msg["cmd"] == "execute":
 	; check message format for execute
 	; add or replace section to database
 	; retangle all sections
-	; look for root section
 	; add or replace parent section to running sections
 
 ;; check message format for execute
@@ -20,8 +19,11 @@ name = data["name"]
 lines = data["lines"]
 sections[name] = lines
 
-;; client variables
+;; variables
 tangled = {}
+
+;; client variables
+global tangled
 
 ;; define functions
 def tangle_rec(name, sections, tangled, parent_section, blacklist):
@@ -43,15 +45,13 @@ def tangle_rec(name, sections, tangled, parent_section, blacklist):
 tangled = {}
 ; clear retangling all
 blacklist = []
-for name in sections.keys():
-	tangle_rec(name, sections, tangled, parent_section, blacklist)
+for section_name in sections.keys():
+	tangle_rec(section_name, sections, tangled, parent_section, blacklist)
 
 ;; if line is literate reference recurse
 if re.match("^\\s*;[^;].*", line):
 	; extract reference name
-	; push reference name to blacklist
 	; recurse and add lines from reference
-	; pop reference name from blacklist
 
 ;; otherwise just add line to list
 else:
@@ -92,27 +92,12 @@ if ref_name not in parent_section:
 if name not in parent_section[ref_name]:
 	parent_section[ref_name].append(name)
 
-;; define functions
-def get_roots(name, parent_section, blacklist):
-	if name not in parent_section:
-		return [name]
-	; add name to blacklist
-	roots = []
-	for parent in parent_section[name]:
-		parent_roots = get_roots(parent)
-		for root in parent_roots:
-			roots.append(root)
-	; pop blacklist
-	return roots
-
-;; look for root section
-blacklist = []
-roots = get_roots(name, parent_section, blacklist)
+;; variables
+pending_sections = []
 
 ;; client variables
-running_queue = []
+global pending_sections
 
 ;; add or replace parent section to running sections
-for root in roots:
-	if root not in running_queue:
-		running_queue.append(root)
+if name != "loop":
+	pending_sections.append(name)

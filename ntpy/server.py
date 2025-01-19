@@ -3,6 +3,31 @@ import re
 import asyncio
 import json
 
+tangled = {}
+
+pending_sections = []
+
+async def start_executor():
+  global pending_sections
+  global tangled
+
+  while True:
+    for name in pending_sections:
+      if name in tangled:
+        code = "\n".join(tangled[name])
+      else:
+        continue
+
+      exec(code)
+
+
+    pending_sections = []
+
+    if "loop" in tangled:
+      code = "\n".join(tangled["loop"])
+      exec(code)
+    await asyncio.sleep(0)
+
 def tangle_rec(name, sections, tangled, parent_section, blacklist):
 	if name in blacklist:
 		return []
@@ -37,20 +62,6 @@ def tangle_rec(name, sections, tangled, parent_section, blacklist):
 
 	return lines
 
-def get_roots(name, parent_section, blacklist):
-	if name not in parent_section:
-		return [name]
-	blacklist.append(name)
-
-	roots = []
-	for parent in parent_section[name]:
-		parent_roots = get_roots(parent)
-		for root in parent_roots:
-			roots.append(root)
-	blacklist.pop()
-
-	return roots
-
 async def start_server(host='localhost', port=8089):
 	server = await asyncio.start_server(on_connect, host, port)
 	print(f"Server started on {port}")
@@ -60,11 +71,11 @@ async def start_server(host='localhost', port=8089):
 async def on_connect(reader, writer):
 	sections = {}
 
-	tangled = {}
+	global tangled
 
 	parent_section = {}
 
-	running_queue = []
+	global pending_sections
 
 	while True:
 		data = await reader.readline()
@@ -86,16 +97,13 @@ async def on_connect(reader, writer):
 			parent_section = {}
 
 			blacklist = []
-			for name in sections.keys():
-				tangle_rec(name, sections, tangled, parent_section, blacklist)
+			for section_name in sections.keys():
+				tangle_rec(section_name, sections, tangled, parent_section, blacklist)
 
-			blacklist = []
-			roots = get_roots(name, parent_section, blacklist)
+			if name != "loop":
+				pending_sections.append(name)
 
-			for root in roots:
-				if root not in running_queue:
-					running_queue.append(root)
-
+		await asyncio.sleep(0)
 
 	writer.close()
 	await writer.wait_closed()

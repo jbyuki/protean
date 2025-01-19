@@ -1,0 +1,35 @@
+;;; ntpy-server
+;; define functions
+async def start_executor():
+  global pending_sections
+  ; executor variables
+  while True:
+    ; execute pending sections
+    ; clear pending sections
+    ; execute loop section if defined
+    await asyncio.sleep(0)
+
+;; execute pending sections
+for name in pending_sections:
+  ; fetch code for section
+  ; execute code for section
+
+;; clear pending sections
+pending_sections = []
+
+;; executor variables
+global tangled
+
+;; fetch code for section
+if name in tangled:
+  code = "\n".join(tangled[name])
+else:
+  continue
+
+;; execute code for section
+exec(code)
+
+;; execute loop section if defined
+if "loop" in tangled:
+  code = "\n".join(tangled["loop"])
+  exec(code)
