@@ -4,15 +4,13 @@
 
 **work-in-progress**
 
-Status
-------
+Status:
 
-* [ ] Interrupt kernel
-* [ ] Restart kernel
-
-* [ ] browser frontend
-* [ ] redirect stdout to frontend
-* [ ] redirect plots to frontend
+- [ ] Interrupt kernel
+- [ ] Restart kernel
+- [ ] browser frontend
+- [ ] redirect stdout to frontend
+- [ ] redirect plots to frontend
 
 Motivation
 ----------
