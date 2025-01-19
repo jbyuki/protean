@@ -22,3 +22,5 @@ async def main():
 
 asyncio.run(main())
 
+print("hello")
+

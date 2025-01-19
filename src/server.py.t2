@@ -18,9 +18,14 @@ async def start_server(host='localhost', port=8089):
 
 ;; define functions
 async def on_connect(reader, writer):
+	print("Client connected.")
 	; client variables
 	while True:
-		data = await reader.readline()
+		try:
+			data = await reader.readline()
+		except:
+			break
+		print(data)
 		if len(data) == 0:
 			break
 		msg = json.loads(data)
@@ -31,6 +36,7 @@ async def on_connect(reader, writer):
 		; send response back
 		await asyncio.sleep(0)
 
+	print("Client disconnected.")
 	writer.close()
 	await writer.wait_closed()
 

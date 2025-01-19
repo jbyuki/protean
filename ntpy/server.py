@@ -69,6 +69,7 @@ async def start_server(host='localhost', port=8089):
 		await server.serve_forever()
 
 async def on_connect(reader, writer):
+	print("Client connected.")
 	sections = {}
 
 	global tangled
@@ -78,7 +79,11 @@ async def on_connect(reader, writer):
 	global pending_sections
 
 	while True:
-		data = await reader.readline()
+		try:
+			data = await reader.readline()
+		except:
+			break
+		print(data)
 		if len(data) == 0:
 			break
 		msg = json.loads(data)
@@ -114,6 +119,7 @@ async def on_connect(reader, writer):
 
 		await asyncio.sleep(0)
 
+	print("Client disconnected.")
 	writer.close()
 	await writer.wait_closed()
 

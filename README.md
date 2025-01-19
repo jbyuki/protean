@@ -6,6 +6,7 @@
 
 Status:
 
+- [x] Execute
 - [ ] Interrupt kernel
 - [ ] Restart kernel
 - [ ] browser frontend

@@ -2,6 +2,7 @@
 ; imports
 ; functions
 ; run async loop
+; print hello
 
 ;; imports
 import sys, os
@@ -30,3 +31,6 @@ import asyncio
 
 ;; run async loop
 asyncio.run(main())
+
+;; print hello
+print("hello")
