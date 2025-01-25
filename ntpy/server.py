@@ -20,14 +20,20 @@ async def start_executor():
       else:
         continue
 
-      exec(code)
+      try:
+        exec(code)
+      except Exception as e:
+        print(f"Exception {e}")
 
 
     pending_sections = []
 
     if "loop" in tangled:
       code = "\n".join(tangled["loop"])
-      exec(code)
+      try:
+        exec(code)
+      except Exception as e:
+        print(f"Exception {e}")
 
     if "loop" not in tangled or "".join(tangled["loop"]) == "":
       await message_received_event.wait()

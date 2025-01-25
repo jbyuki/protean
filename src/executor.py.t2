@@ -28,12 +28,18 @@ else:
   continue
 
 ;; execute code for section
-exec(code)
+try:
+  exec(code)
+except Exception as e:
+  print(f"Exception {e}")
 
 ;; execute loop section if defined
 if "loop" in tangled:
   code = "\n".join(tangled["loop"])
-  exec(code)
+  try:
+    exec(code)
+  except Exception as e:
+    print(f"Exception {e}")
 
 ;; if no pending sections go into deep sleep
 if "loop" not in tangled or "".join(tangled["loop"]) == "":
