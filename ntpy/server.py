@@ -121,7 +121,6 @@ async def on_connect(reader, writer):
 		msg = json.loads(data)
 		status = "Done"
 		assert("cmd" in msg)
-		assert("data" in msg)
 
 		if msg["cmd"] == "execute":
 			data = msg["data"]
@@ -142,6 +141,8 @@ async def on_connect(reader, writer):
 			if name != "loop":
 				pending_sections.append(name)
 
+		elif msg["cmd"] == "killLoop":
+		  sections.pop("loop", None)
 		else:
 			status = f"Unknown command {msg["cmd"]}"
 

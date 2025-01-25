@@ -44,7 +44,6 @@ async def on_connect(reader, writer):
 
 ;; check that message is well formed
 assert("cmd" in msg)
-assert("data" in msg)
 
 ;; send response back
 response = json.dumps({"status" : status}) + '\n'

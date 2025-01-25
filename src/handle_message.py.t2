@@ -1,5 +1,5 @@
 ;;; ntpy-server
-;; handle message
+;;- handle message
 if msg["cmd"] == "execute":
 	; check message format for execute
 	; add or replace section to database
