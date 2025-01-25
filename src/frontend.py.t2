@@ -1,0 +1,20 @@
+;;; ntpy-server
+;; define functions
+async def start_frontend_server(host='localhost', port=8090):
+	server = await asyncio.start_server(on_frontend_connect, host, port)
+	print(f"Front server started on {port}")
+	async with server:
+		await server.serve_forever()
+
+
+;; define functions
+async def on_connect(reader, writer):
+	while True:
+		try:
+			data = await reader.readline()
+		except:
+			break
+		if len(data) == 0:
+			break
+
+		await asyncio.sleep(0)

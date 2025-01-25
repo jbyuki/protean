@@ -7,6 +7,7 @@ async def start_executor():
     ; execute pending sections
     ; clear pending sections
     ; execute loop section if defined
+    ; if no pending sections go into deep sleep
     await asyncio.sleep(0)
 
 ;; execute pending sections
@@ -33,3 +34,21 @@ exec(code)
 if "loop" in tangled:
   code = "\n".join(tangled["loop"])
   exec(code)
+
+;; if no pending sections go into deep sleep
+if "loop" not in tangled or "".join(tangled["loop"]) == "":
+  await message_received_event.wait()
+  message_received_event.clear()
+
+;; executor variables
+global message_received_event
+
+;; create event objects
+global message_received_event
+message_received_event = asyncio.Event()
+
+;; server variables
+global message_received_event
+
+;; notify that message has been received
+message_received_event.set()

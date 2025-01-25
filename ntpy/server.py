@@ -11,6 +11,8 @@ async def start_executor():
   global pending_sections
   global tangled
 
+  global message_received_event
+
   while True:
     for name in pending_sections:
       if name in tangled:
@@ -26,8 +28,30 @@ async def start_executor():
     if "loop" in tangled:
       code = "\n".join(tangled["loop"])
       exec(code)
+
+    if "loop" not in tangled or "".join(tangled["loop"]) == "":
+      await message_received_event.wait()
+      message_received_event.clear()
+
     await asyncio.sleep(0)
 
+async def start_frontend_server(host='localhost', port=8090):
+	server = await asyncio.start_server(on_frontend_connect, host, port)
+	print(f"Front server started on {port}")
+	async with server:
+		await server.serve_forever()
+
+
+async def on_connect(reader, writer):
+	while True:
+		try:
+			data = await reader.readline()
+		except:
+			break
+		if len(data) == 0:
+			break
+
+		await asyncio.sleep(0)
 def tangle_rec(name, sections, tangled, parent_section, blacklist):
 	if name in blacklist:
 		return []
@@ -69,6 +93,8 @@ async def start_server(host='localhost', port=8089):
 		await server.serve_forever()
 
 async def on_connect(reader, writer):
+	global message_received_event
+
 	print("Client connected.")
 	sections = {}
 
@@ -117,6 +143,7 @@ async def on_connect(reader, writer):
 		writer.write(response.encode())
 		await writer.drain()
 
+		message_received_event.set()
 		await asyncio.sleep(0)
 
 	print("Client disconnected.")
@@ -126,8 +153,12 @@ async def on_connect(reader, writer):
 
 if __name__ == "__main__":
 	async def main():
+		global message_received_event
+		message_received_event = asyncio.Event()
+
 		executor_task = asyncio.create_task(start_executor())
 		server_task = asyncio.create_task(start_server())
+		frontend_server_task = asyncio.create_task(start_frontend_server())
 		try:
 			await server_task
 		except asyncio.CancelledError:
