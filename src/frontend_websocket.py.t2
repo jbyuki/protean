@@ -1,0 +1,48 @@
+;;; ntpy-server
+;; do routing
+elif route == b'/ws':
+  ; read websocket handshake
+  ; send back websocket handshake
+  ; switch to ws mode
+
+;; read websocket handshake
+ws_keys = {}
+for line in http_msg[1:]:
+  line = line.decode()
+  sep = line.find(':')
+  if sep == -1:
+    continue
+  key = line[:sep].strip()
+  val = line[sep+1:].strip()
+  ws_keys[key] = val
+  print(line)
+
+assert(ws_keys["Upgrade"] == "websocket")
+assert(ws_keys["Connection"] == "Upgrade")
+ws_key = ws_keys["Sec-WebSocket-Key"]
+assert(ws_keys["Sec-WebSocket-Version"] == "13")
+print(ws_keys)
+
+;; imports
+import hashlib
+import base64
+
+;; send back websocket handshake
+hash = hashlib.sha1((ws_key + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11").encode())
+base64hash = base64.b64encode(hash.digest())
+msg_lines = [
+  "HTTP/1.1 101 Switching Protocols",
+  "Upgrade: websocket",
+  "Connection: Upgrade",
+  f"Sec-WebSocket-Accept: {base64hash.decode()}",
+]
+await write_http_message(writer, msg_lines)
+
+;; switch to ws mode
+ws_mode = True
+
+;; await on read and write
+data = await reader.read(1)
+print(f"0x{data.hex().upper()}")
+if len(data) == 0:
+  break

@@ -1,3 +1,6 @@
+import hashlib
+import base64
+
 import re
 
 import asyncio
@@ -48,16 +51,102 @@ async def start_frontend_server(host='localhost', port=8090):
 		await server.serve_forever()
 
 
-async def on_connect(reader, writer):
+async def on_frontend_connect(reader, writer):
+	print("Connected to frontend")
+	ws_mode = False
 	while True:
-		try:
-			data = await reader.readline()
-		except:
-			break
-		if len(data) == 0:
-			break
+		if ws_mode:
+			data = await reader.read(1)
+			print(f"0x{data.hex().upper()}")
+			if len(data) == 0:
+			  break
+			pass
+		else:
+			http_msg = []
+			while True:
+				try:
+					line = await reader.readline()
+				except Exception as e:
+					http_msg.clear()
+					break
+				if len(line) == 0:
+					http_msg.clear()
+					break
+				if line == b'\r\n':
+					break
+				http_msg.append(line[:-2])
 
-		await asyncio.sleep(0)
+			if len(http_msg) == 0:
+				break
+			first_line = http_msg[0]
+			space = first_line.find(b' ')
+			if space == -1:
+				continue
+			method = first_line[:space]
+			rest = first_line[space+1:]
+
+			if method == b'GET':
+				space = rest.find(b' ')
+				if space == -1:
+					continue
+				route = rest[:space]
+				rest = rest[space+1:]
+
+				if route == b'/':
+					content = '<!doctype html><html><head><meta=charset=utf-8><title>blah</title></head><body><p>Hello world :)</p></body></html>'.encode('utf-8')
+					msg_lines = [
+						"HTTP/1.1 200 OK",
+						f"Content-Length: {len(content)}",
+						"Content-Type: text/html; charset=UTF-8",
+					]
+					await write_http_message(writer, msg_lines, content)
+				elif route == b'/ws':
+				  ws_keys = {}
+				  for line in http_msg[1:]:
+				    line = line.decode()
+				    sep = line.find(':')
+				    if sep == -1:
+				      continue
+				    key = line[:sep].strip()
+				    val = line[sep+1:].strip()
+				    ws_keys[key] = val
+				    print(line)
+
+				  assert(ws_keys["Upgrade"] == "websocket")
+				  assert(ws_keys["Connection"] == "Upgrade")
+				  ws_key = ws_keys["Sec-WebSocket-Key"]
+				  assert(ws_keys["Sec-WebSocket-Version"] == "13")
+				  print(ws_keys)
+
+				  hash = hashlib.sha1((ws_key + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11").encode())
+				  base64hash = base64.b64encode(hash.digest())
+				  msg_lines = [
+				    "HTTP/1.1 101 Switching Protocols",
+				    "Upgrade: websocket",
+				    "Connection: Upgrade",
+				    f"Sec-WebSocket-Accept: {base64hash.decode()}",
+				  ]
+				  await write_http_message(writer, msg_lines)
+
+				  ws_mode = True
+
+
+
+			else:
+				print(f"Unknown method {method}")
+
+
+	writer.close()
+	await writer.wait_closed()
+
+async def write_http_message(writer, lines, body=None):
+	for line in lines:
+		writer.write((line + '\r\n').encode())
+	writer.write(b'\r\n')
+	if body is not None:
+		writer.write(body)
+	await writer.drain()
+
 def tangle_rec(name, sections, tangled, parent_section, blacklist):
 	if name in blacklist:
 		return []
@@ -123,6 +212,7 @@ async def on_connect(reader, writer):
 		assert("cmd" in msg)
 
 		if msg["cmd"] == "execute":
+			assert("data" in msg)
 			data = msg["data"]
 			assert("name" in data)
 			assert("lines" in data)
