@@ -65,7 +65,6 @@ import struct
 
 ;; read payload length
 paylen = data[0] & 0x7F
-print(paylen)
 if paylen == 126:
   data = await reader.read(2)
   paylen = struct.unpack("!H", data)[0]
@@ -87,7 +86,6 @@ for i in range(len(payload)):
   readbuffer.append(payload[i] ^ masking[i%4])
 
 ;; handle ws message
-print("Received:")
 if opcode == 0x1:
   s = ""
   for c in readbuffer:
@@ -95,3 +93,38 @@ if opcode == 0x1:
   print(s)
 else:
   print(readbuffer)
+
+;; define functions
+async def frontend_writer(writer):
+  ; write ws message
+  
+;; start writer task
+asyncio.create_task(frontend_writer(writer))
+
+;; define functions
+def text_ws_msg(txt):
+  txt = txt.encode('utf-8')
+  paylen = len(txt)
+  msg = [0x81]
+  ; encode paylength
+  ; put payload data
+  return struct.pack(f"{len(msg)}B", *msg)
+
+;; encode paylength
+if paylen <= 125:
+  msg.append(paylen)
+elif paylen <= ((1 << 16) - 1):
+  msg.append(126)
+  for b in struct.pack("!H", paylen):
+    msg.append(b)
+else:
+  msg.append(127)
+  for b in struct.pack("!Q", paylen):
+    msg.append(b)
+
+;; put payload data
+msg += txt
+
+;; write ws message
+writer.write(text_ws_msg("hello client!"))
+await writer.drain()

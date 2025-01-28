@@ -70,7 +70,6 @@ async def on_frontend_connect(reader, writer):
 			  assert(data[0] & 0x80 == 0x80) # Client message must be masked
 
 			  paylen = data[0] & 0x7F
-			  print(paylen)
 			  if paylen == 126:
 			    data = await reader.read(2)
 			    paylen = struct.unpack("!H", data)[0]
@@ -89,7 +88,6 @@ async def on_frontend_connect(reader, writer):
 			  if fin:
 			    break
 
-			print("Received:")
 			if opcode == 0x1:
 			  s = ""
 			  for c in readbuffer:
@@ -97,6 +95,7 @@ async def on_frontend_connect(reader, writer):
 			  print(s)
 			else:
 			  print(readbuffer)
+
 		else:
 			http_msg = []
 			while True:
@@ -166,6 +165,8 @@ async def on_frontend_connect(reader, writer):
 
 				  ws_mode = True
 
+				  asyncio.create_task(frontend_writer(writer))
+
 
 
 			else:
@@ -182,6 +183,29 @@ async def write_http_message(writer, lines, body=None):
 	if body is not None:
 		writer.write(body)
 	await writer.drain()
+
+async def frontend_writer(writer):
+  writer.write(text_ws_msg("hello client!"))
+  await writer.drain()
+  
+def text_ws_msg(txt):
+  txt = txt.encode('utf-8')
+  paylen = len(txt)
+  msg = [0x81]
+  if paylen <= 125:
+    msg.append(paylen)
+  elif paylen <= ((1 << 16) - 1):
+    msg.append(126)
+    for b in struct.pack("!H", paylen):
+      msg.append(b)
+  else:
+    msg.append(127)
+    for b in struct.pack("!Q", paylen):
+      msg.append(b)
+
+  msg += txt
+
+  return struct.pack(f"{len(msg)}B", *msg)
 
 def tangle_rec(name, sections, tangled, parent_section, blacklist):
 	if name in blacklist:
