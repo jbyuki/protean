@@ -9,7 +9,7 @@ Status:
 - [x] Execute
 - [ ] Interrupt kernel
 - [ ] Restart kernel
-- [ ] browser frontend
+- [x] browser frontend
 - [ ] redirect stdout to frontend
 - [ ] redirect plots to frontend
 
