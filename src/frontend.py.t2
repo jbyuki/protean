@@ -14,10 +14,8 @@ async def on_frontend_connect(reader, writer):
 	ws_mode = False
 	while True:
 		if ws_mode:
-			; await on read and write
-			; if read wait for entire message and handle
-			; if write send to client
-			pass
+			; await on read
+			; handle ws message
 		else:
 			http_msg = []
 			; read http msg

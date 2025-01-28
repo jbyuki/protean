@@ -1,6 +1,8 @@
 import hashlib
 import base64
 
+import struct
+
 import re
 
 import asyncio
@@ -56,11 +58,45 @@ async def on_frontend_connect(reader, writer):
 	ws_mode = False
 	while True:
 		if ws_mode:
-			data = await reader.read(1)
-			print(f"0x{data.hex().upper()}")
-			if len(data) == 0:
-			  break
-			pass
+			readbuffer = []
+
+			while True:
+			  data = await reader.read(1)
+			  fin = data[0] & 0x80 == 0x80
+			  if data[0] & 0xF != 0:
+			    opcode = data[0] & 0xF
+
+			  data = await reader.read(1)
+			  assert(data[0] & 0x80 == 0x80) # Client message must be masked
+
+			  paylen = data[0] & 0x7F
+			  print(paylen)
+			  if paylen == 126:
+			    data = await reader.read(2)
+			    paylen = struct.unpack("!H", data)[0]
+			  elif paylen == 127:
+			    data = await reader.read(8)
+			    paylen = struct.unpack("!Q", data)[0]
+
+			  masking = await reader.read(4)
+
+			  payload = await reader.read(paylen)
+
+			  for i in range(len(payload)):
+			    readbuffer.append(payload[i] ^ masking[i%4])
+
+
+			  if fin:
+			    break
+
+			print("Received:")
+			if opcode == 0x1:
+			  s = ""
+			  for c in readbuffer:
+			    s += chr(c)
+			  print(s)
+			else:
+			  print(readbuffer)
 		else:
 			http_msg = []
 			while True:
@@ -116,7 +152,6 @@ async def on_frontend_connect(reader, writer):
 				  assert(ws_keys["Connection"] == "Upgrade")
 				  ws_key = ws_keys["Sec-WebSocket-Key"]
 				  assert(ws_keys["Sec-WebSocket-Version"] == "13")
-				  print(ws_keys)
 
 				  hash = hashlib.sha1((ws_key + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11").encode())
 				  base64hash = base64.b64encode(hash.digest())
@@ -127,6 +162,7 @@ async def on_frontend_connect(reader, writer):
 				    f"Sec-WebSocket-Accept: {base64hash.decode()}",
 				  ]
 				  await write_http_message(writer, msg_lines)
+				  print("Websocket handshake done")
 
 				  ws_mode = True
 
