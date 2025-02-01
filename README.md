@@ -9,8 +9,9 @@ Status:
 - [x] Execute
 - [ ] Interrupt kernel
 - [ ] Restart kernel
+- [ ] Multiple kernels
 - [x] browser frontend
-- [ ] redirect stdout to frontend
+- [x] redirect stdout to frontend
 - [ ] redirect plots to frontend
 
 Motivation
