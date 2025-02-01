@@ -1,0 +1,98 @@
+h1
+{
+  color: red;
+}
+
+#menu
+{
+  position: sticky;
+  top: 0;
+  background: #222;
+  padding: 5px 0px;
+  margin: 0 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  border-bottom: solid 1px #444;
+}
+
+.menu-logo
+{
+  padding-left: 20px;
+  padding-right: 20px;
+  color: #CCC;
+  border-right: solid 1px #444;
+  display: flex;
+  align-items: center;
+}
+
+.menu-logo > p
+{
+  font-size: 1rem;
+  font-family: sans-serif;
+  font-weight: normal;
+  text-decoration: none;
+  margin: 0;
+  margin-bottom: 3px;
+  user-select: none;
+  color: #888;
+  cursor: default;
+}
+
+.menu-spacer
+{
+  flex-grow: 1;
+}
+
+.menu-button
+{
+  background: #222;
+  color: #AAA;
+  padding: 0px 0px;
+  cursor: pointer;
+  user-select: none;
+  border-radius: 0%;
+  border-left: solid 1px #444;
+  padding-left: 10px;
+  padding-right: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.menu-button > p
+{
+  padding: 2px;
+  padding-left: 10px;
+  padding-right: 10px;
+  margin: 0;
+  padding-bottom: 3px;
+  border-radius: 10px;
+}
+
+.menu-button > p:hover
+{
+  background: #333;
+}
+
+body
+{
+  padding: 0 0;
+  margin: 0 0;
+  font-family: system-ui;
+}
+
+#output
+{
+  margin: 0;
+  padding: 0;
+  background: #222;
+}
+
+#output > p
+{
+  margin: 0;
+  padding: 10px;
+  color: #AAA;
+  background: #222;
+}
