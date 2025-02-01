@@ -16,6 +16,27 @@ class PrintStream:
   def write(self, s):
     ; broadcast to all frontends
 
+;; define functions
+def msg_output_txt(txt):
+  ; get task id
+  msg = {}
+  msg["cmd"] = "output"
+  msg["data"] = { "task_id": task_id, "text": txt }
+  return json.dumps(msg)
+
 ;; broadcast to all frontends
 for frontend_writer in frontend_writers:
-  frontend_writer.send(s) 
+  frontend_writer.send(msg_output_txt(s)) 
+
+;; variables
+task_id = 0
+
+;; get task id
+global task_id
+
+;; increase task id
+global task_id
+task_id = task_id + 1
+
+;; variables
+import time

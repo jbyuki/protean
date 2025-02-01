@@ -22,7 +22,8 @@ class PrintStream:
     pass
   def write(self, s):
     for frontend_writer in frontend_writers:
-      frontend_writer.send(s) 
+      frontend_writer.send(msg_output_txt(s)) 
+
 
 frontend_writers = []
 
@@ -30,6 +31,9 @@ tangled = {}
 
 pending_sections = []
 
+task_id = 0
+
+import time
 async def start_executor():
   global pending_sections
   global tangled
@@ -276,6 +280,14 @@ def tangle_rec(name, sections, tangled, parent_section, blacklist):
 
 	return lines
 
+def msg_output_txt(txt):
+  global task_id
+
+  msg = {}
+  msg["cmd"] = "output"
+  msg["data"] = { "task_id": task_id, "text": txt }
+  return json.dumps(msg)
+
 async def start_server(host='localhost', port=8089):
 	server = await asyncio.start_server(on_connect, host, port)
 	print(f"Server started on {port}")
@@ -325,6 +337,9 @@ async def on_connect(reader, writer):
 
 			if name != "loop":
 				pending_sections.append(name)
+			global task_id
+			task_id = task_id + 1
+
 
 		elif msg["cmd"] == "killLoop":
 		  sections.pop("loop", None)

@@ -1,0 +1,132 @@
+:: ./script.js
+; variables
+window.onload = () =>
+{
+  ; set status to disconnected
+  ; create websocket
+  ; set websocket callbacks
+};
+
+;; create websocket
+const socket = new WebSocket("ws://localhost:8090/ws");
+
+;; set websocket callbacks
+socket.onopen = (event) => {
+  ; set status to connected
+};
+
+socket.onclose = (event) => {
+  ; set status to disconnected
+};
+
+socket.onclose = (event) => {
+  ; set status to error
+};
+
+socket.onmessage = (event) => {
+  console.log(event);
+  ; if message is text
+  ; if message is binary
+};
+
+;; set status to connected
+const status = document.getElementById("connection-status");
+const p = status.firstElementChild;
+p.textContent = "connected";
+p.style.color = "#444";
+; show kernel status
+
+;; set status to disconnected
+const status = document.getElementById("connection-status");
+const p = status.firstElementChild;
+p.textContent = "disconnected";
+p.style.color = "#444";
+; hide kernel status
+
+;; set status to error
+const status = document.getElementById("connection-status");
+const p = status.firstElementChild;
+p.textContent = "error";
+p.style.color = "#b66";
+console.log(event);
+; hide kernel status
+
+;; hide kernel status
+const kernel_status = document.getElementById("kernel-status");
+kernel_status.style.display = "none";
+
+;; show kernel status
+const kernel_status = document.getElementById("kernel-status");
+kernel_status.style.display = "block";
+
+;; if message is text
+if(typeof event.data == "string")
+{
+  ; decode message json
+  ; if message is output
+}
+
+;; decode message json
+const msg = JSON.parse(event.data);
+
+;; if message is output
+if(msg.cmd == "output")
+{
+  ; read task id
+  ; if task id is same as previous append to existing
+  ; otherwise create new and append
+}
+
+;; read task id
+const task_id = msg.data.task_id;
+
+;; variables
+var previous_task_id = null;
+var previous_cell;
+
+;; if task id is same as previous append to existing
+if(task_id === previous_task_id)
+{
+  previous_cell.textContent += msg.data.text;
+}
+
+;; otherwise create new and append
+else
+{
+  ; get output element
+  ; get current date
+  ; create cell in output element
+  ; set text content with message
+  ; set previous task id
+  ; append cell to output
+}
+
+;; get output element
+const output = document.getElementById("output");
+
+;; get current date
+const today = new Date();
+const time_iso = today.toLocaleString();
+
+;; create cell in output element
+const cell = document.createElement("div");
+cell.classList.add("cell");
+
+const cell_date = document.createElement("div");
+cell_date.classList.add("cell-date");
+cell_date.textContent = time_iso
+cell.appendChild(cell_date);
+
+const cell_output = document.createElement("div");
+cell_output.classList.add("cell-output");
+cell.appendChild(cell_output);
+
+;; set previous task id
+previous_task_id = task_id;
+previous_cell = cell_output;
+
+;; set text content with message
+cell_output.textContent = msg.data.text;
+
+;; append cell to output
+output.appendChild(cell);

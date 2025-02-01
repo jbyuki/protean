@@ -5,6 +5,7 @@ if msg["cmd"] == "execute":
 	; add or replace section to database
 	; retangle all sections
 	; add or replace parent section to running sections
+	; increase task id
 
 ;; check message format for execute
 assert("data" in msg)
