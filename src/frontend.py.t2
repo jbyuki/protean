@@ -23,6 +23,7 @@ async def on_frontend_connect(reader, writer):
 				break
 			; handle http message frontend
 
+	; stop frontend writer tasks
 	writer.close()
 	await writer.wait_closed()
 

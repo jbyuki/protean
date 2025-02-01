@@ -5,8 +5,26 @@ import struct
 
 import re
 
+import sys
+from io import StringIO
+
 import asyncio
 import json
+
+class FrontendWriter:
+  def __init__(self, writer):
+    self.writer = writer
+  def send(self, s):
+    self.writer.write(text_ws_msg(s))
+
+class PrintStream:
+  def __init__(self):
+    pass
+  def write(self, s):
+    for frontend_writer in frontend_writers:
+      frontend_writer.send(s) 
+
+frontend_writers = []
 
 tangled = {}
 
@@ -26,8 +44,14 @@ async def start_executor():
         continue
 
       try:
+        sys.stdout = PrintStream()
+
         exec(code)
+        sys.stdout = sys.__stdout__
+
       except Exception as e:
+        sys.stdout = sys.__stdout__
+
         print(f"Exception {e}")
 
 
@@ -36,8 +60,14 @@ async def start_executor():
     if "loop" in tangled:
       code = "\n".join(tangled["loop"])
       try:
+        sys.stdout = PrintStream()
+
         exec(code)
+        sys.stdout = sys.__stdout__
+
       except Exception as e:
+        sys.stdout = sys.__stdout__
+
         print(f"Exception {e}")
 
     if "loop" not in tangled or "".join(tangled["loop"]) == "":
@@ -55,6 +85,9 @@ async def start_frontend_server(host='localhost', port=8090):
 
 async def on_frontend_connect(reader, writer):
 	print("Connected to frontend")
+	global frontend_writers
+	frontend_writer_task = None
+	  
 	ws_mode = False
 	while True:
 		if ws_mode:
@@ -165,13 +198,20 @@ async def on_frontend_connect(reader, writer):
 
 				  ws_mode = True
 
-				  asyncio.create_task(frontend_writer(writer))
+				  if frontend_writer_task is not None and frontend_writer_task in frontend_writers:
+				    frontend_writers.remove(frontend_writer_task)
+
+				  frontend_writer_task = FrontendWriter(writer)
+				  frontend_writers.append(frontend_writer_task)
 
 
 
 			else:
 				print(f"Unknown method {method}")
 
+
+	if frontend_writer_task is not None and frontend_writer_task in frontend_writers:
+	  frontend_writers.remove(frontend_writer_task)
 
 	writer.close()
 	await writer.wait_closed()
@@ -184,10 +224,6 @@ async def write_http_message(writer, lines, body=None):
 		writer.write(body)
 	await writer.drain()
 
-async def frontend_writer(writer):
-  writer.write(text_ws_msg("hello client!"))
-  await writer.drain()
-  
 def text_ws_msg(txt):
   txt = txt.encode('utf-8')
   paylen = len(txt)
@@ -204,7 +240,6 @@ def text_ws_msg(txt):
       msg.append(b)
 
   msg += txt
-
   return struct.pack(f"{len(msg)}B", *msg)
 
 def tangle_rec(name, sections, tangled, parent_section, blacklist):

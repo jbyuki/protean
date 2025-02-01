@@ -1,6 +1,7 @@
 ;;; ntpy-server
 :: ../ntpy/server.py
 ; imports
+; classes
 ; variables
 ; define functions
 ; if standalone start server

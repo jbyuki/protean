@@ -29,16 +29,22 @@ else:
 
 ;; execute code for section
 try:
+  ; redirect to custom stdout
   exec(code)
+  ; restore to default stdout
 except Exception as e:
+  ; restore to default stdout
   print(f"Exception {e}")
 
 ;; execute loop section if defined
 if "loop" in tangled:
   code = "\n".join(tangled["loop"])
   try:
+    ; redirect to custom stdout
     exec(code)
+    ; restore to default stdout
   except Exception as e:
+    ; restore to default stdout
     print(f"Exception {e}")
 
 ;; if no pending sections go into deep sleep

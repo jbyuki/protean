@@ -94,12 +94,28 @@ if opcode == 0x1:
 else:
   print(readbuffer)
 
-;; define functions
-async def frontend_writer(writer):
-  ; write ws message
+;; classes
+class FrontendWriter:
+  def __init__(self, writer):
+    self.writer = writer
+  def send(self, s):
+    self.writer.write(text_ws_msg(s))
+
+;; variables
+frontend_writers = []
+
+;; front client variables
+global frontend_writers
+frontend_writer_task = None
   
 ;; start writer task
-asyncio.create_task(frontend_writer(writer))
+; stop frontend writer tasks
+frontend_writer_task = FrontendWriter(writer)
+frontend_writers.append(frontend_writer_task)
+
+;; stop frontend writer tasks
+if frontend_writer_task is not None and frontend_writer_task in frontend_writers:
+  frontend_writers.remove(frontend_writer_task)
 
 ;; define functions
 def text_ws_msg(txt):
@@ -124,7 +140,3 @@ else:
 
 ;; put payload data
 msg += txt
-
-;; write ws message
-writer.write(text_ws_msg("hello client!"))
-await writer.drain()

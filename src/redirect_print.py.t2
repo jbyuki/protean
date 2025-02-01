@@ -1,0 +1,21 @@
+;;; ntpy-server
+;; imports
+import sys
+from io import StringIO
+
+;; redirect to custom stdout
+sys.stdout = PrintStream()
+
+;; restore to default stdout
+sys.stdout = sys.__stdout__
+
+;; classes
+class PrintStream:
+  def __init__(self):
+    pass
+  def write(self, s):
+    ; broadcast to all frontends
+
+;; broadcast to all frontends
+for frontend_writer in frontend_writers:
+  frontend_writer.send(s) 
