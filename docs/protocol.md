@@ -11,6 +11,8 @@ Command
 `execute`
 ---------
 
+> client -> server
+
 * `cmd` : `"execute"`
 * `data` :
 
@@ -29,6 +31,8 @@ Notes:
 `output`
 ---------
 
+> server -> client
+
 * `cmd` : `"output"`
 * `data` :
 
@@ -41,6 +45,8 @@ Notes:
 
 `notify`
 ---------
+
+> server -> client
 
 * `cmd` : `"notify"`
 * `data` :
