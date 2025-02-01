@@ -104,8 +104,13 @@ async def on_frontend_connect(reader, writer):
 		if ws_mode:
 			readbuffer = []
 
+			end_con = False
 			while True:
 			  data = await reader.read(1)
+			  if len(data) == 0:
+			    end_con = True
+			    break
+
 			  fin = data[0] & 0x80 == 0x80
 			  if data[0] & 0xF != 0:
 			    opcode = data[0] & 0xF
@@ -131,6 +136,8 @@ async def on_frontend_connect(reader, writer):
 
 			  if fin:
 			    break
+			if end_con:
+			  break
 
 			if opcode == 0x1:
 			  s = ""
