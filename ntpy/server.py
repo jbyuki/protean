@@ -40,12 +40,17 @@ async def start_executor():
 
   global message_received_event
 
+  global frontend_writers
+
   while True:
     for name in pending_sections:
       if name in tangled:
         code = "\n".join(tangled[name])
       else:
         continue
+
+      for frontend_writer in frontend_writers:
+        frontend_writer.send(msg_notify_running(name)) 
 
       try:
         sys.stdout = PrintStream()
@@ -75,6 +80,8 @@ async def start_executor():
         print(f"Exception {e}")
 
     if "loop" not in tangled or "".join(tangled["loop"]) == "":
+      for frontend_writer in frontend_writers:
+        frontend_writer.send(msg_notify_idle()) 
       await message_received_event.wait()
       message_received_event.clear()
 
@@ -356,6 +363,18 @@ async def on_connect(reader, writer):
 	print("Client disconnected.")
 	writer.close()
 	await writer.wait_closed()
+
+def msg_notify_running(section_name):
+  msg = {}
+  msg["cmd"] = "notify"
+  msg["data"] = { "status": "running", "section": section_name }
+  return json.dumps(msg)
+
+def msg_notify_idle():
+  msg = {}
+  msg["cmd"] = "notify"
+  msg["data"] = { "status": "idle" }
+  return json.dumps(msg)
 
 
 if __name__ == "__main__":

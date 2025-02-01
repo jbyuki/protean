@@ -13,6 +13,7 @@ async def start_executor():
 ;; execute pending sections
 for name in pending_sections:
   ; fetch code for section
+  ; notify front that kernel is running section
   ; execute code for section
 
 ;; clear pending sections
@@ -40,6 +41,7 @@ except Exception as e:
 if "loop" in tangled:
   code = "\n".join(tangled["loop"])
   try:
+    ; if enough delay passed notify frontend that loop is running
     ; redirect to custom stdout
     exec(code)
     ; restore to default stdout
@@ -49,6 +51,7 @@ if "loop" in tangled:
 
 ;; if no pending sections go into deep sleep
 if "loop" not in tangled or "".join(tangled["loop"]) == "":
+  ; notify front that kernel is idle
   await message_received_event.wait()
   message_received_event.clear()
 

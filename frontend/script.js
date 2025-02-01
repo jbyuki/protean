@@ -1,6 +1,12 @@
 var previous_task_id = null;
 var previous_cell;
 
+var status_animation = null;
+
+var idle_request = null;
+
+var endAnimTime = performance.now();
+
 window.onload = () =>
 {
   const status = document.getElementById("connection-status");
@@ -87,6 +93,74 @@ window.onload = () =>
           previous_cell = cell_output;
 
           output.appendChild(cell);
+
+        }
+
+      }
+
+      else if(msg.cmd == "notify")
+      {
+        if(msg.data.status == "running")
+        {
+          var section_name = msg.data.section;
+          if(section_name.length > 16)
+          {
+            section_name = section_name.substr(0,16) + "...";
+          }
+
+          if(status_animation !== null)
+          {
+            clearInterval(status_animation);
+            status_animation = null;
+          }
+
+          if(idle_request !== null)
+          {
+            clearInterval(idle_request);
+            idle_request = null;
+          }
+
+          const kernel_status = document.getElementById("kernel-status").firstElementChild;
+          kernel_status.textContent = "";
+
+          status_animation = setInterval((kernel_status, section_name) => {
+            const curLength = kernel_status.textContent.length;
+            if(curLength < section_name.length)
+            {
+              kernel_status.textContent += section_name[curLength];
+            }
+            else
+            {
+              clearInterval(status_animation);
+              status_animation = null;
+              endAnimTime = performance.now();
+
+            }
+          }, 25, kernel_status, section_name);
+
+        }
+
+        else if(msg.data.status == "idle")
+        {
+          if(idle_request !== null)
+          {
+            clearInterval(idle_request);
+            idle_request = null;
+          }
+
+          idle_request = setInterval(() => {
+            const nowTime = performance.now();
+
+            if(status_animation === null && nowTime - endAnimTime > 1000)
+            {
+              const kernel_status = document.getElementById("kernel-status").firstElementChild;
+              kernel_status.textContent = "idle";
+              clearInterval(idle_request);
+              idle_request = null;
+            }
+
+          }, 100);
+
         }
 
       }

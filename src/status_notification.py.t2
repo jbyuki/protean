@@ -1,0 +1,25 @@
+;;; ntpy-server
+;; define functions
+def msg_notify_running(section_name):
+  msg = {}
+  msg["cmd"] = "notify"
+  msg["data"] = { "status": "running", "section": section_name }
+  return json.dumps(msg)
+
+;; executor variables
+global frontend_writers
+
+;; notify front that kernel is running section
+for frontend_writer in frontend_writers:
+  frontend_writer.send(msg_notify_running(name)) 
+
+;; define functions
+def msg_notify_idle():
+  msg = {}
+  msg["cmd"] = "notify"
+  msg["data"] = { "status": "idle" }
+  return json.dumps(msg)
+
+;; notify front that kernel is idle
+for frontend_writer in frontend_writers:
+  frontend_writer.send(msg_notify_idle()) 
