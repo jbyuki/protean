@@ -76,6 +76,7 @@ if(msg.cmd == "output")
   ; read task id
   ; if task id is same as previous append to existing
   ; otherwise create new and append
+  ; scroll to bottom
 }
 
 ;; read task id
@@ -88,7 +89,7 @@ var previous_cell;
 ;; if task id is same as previous append to existing
 if(task_id === previous_task_id)
 {
-  previous_cell.textContent += msg.data.text;
+  previous_cell.innerText += msg.data.text;
 }
 
 ;; otherwise create new and append
@@ -127,10 +128,13 @@ previous_task_id = task_id;
 previous_cell = cell_output;
 
 ;; set text content with message
-cell_output.textContent = msg.data.text;
+cell_output.innerText = msg.data.text;
 
 ;; append cell to output
 output.appendChild(cell);
+
+;; scroll to bottom
+window.scrollTo(0, document.body.scrollHeight);
 
 ;; if message is notify
 else if(msg.cmd == "notify")
@@ -181,7 +185,7 @@ status_animation = setInterval((kernel_status, section_name) => {
     status_animation = null;
     ; set running animation end time
   }
-}, 25, kernel_status, section_name);
+}, 15, kernel_status, section_name);
 
 ;; abort previous animation if any
 if(status_animation !== null)

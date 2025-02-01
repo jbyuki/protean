@@ -65,7 +65,7 @@ window.onload = () =>
 
         if(task_id === previous_task_id)
         {
-          previous_cell.textContent += msg.data.text;
+          previous_cell.innerText += msg.data.text;
         }
 
         else
@@ -87,7 +87,7 @@ window.onload = () =>
           cell_output.classList.add("cell-output");
           cell.appendChild(cell_output);
 
-          cell_output.textContent = msg.data.text;
+          cell_output.innerText = msg.data.text;
 
           previous_task_id = task_id;
           previous_cell = cell_output;
@@ -95,6 +95,8 @@ window.onload = () =>
           output.appendChild(cell);
 
         }
+
+        window.scrollTo(0, document.body.scrollHeight);
 
       }
 
@@ -136,7 +138,7 @@ window.onload = () =>
               endAnimTime = performance.now();
 
             }
-          }, 25, kernel_status, section_name);
+          }, 15, kernel_status, section_name);
 
         }
 
