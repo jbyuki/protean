@@ -17,6 +17,7 @@ class FrontendWriter:
   def send(self, s):
     self.writer.write(text_ws_msg(s))
 
+
 class PrintStream:
   def __init__(self):
     pass

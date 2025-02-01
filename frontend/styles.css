@@ -119,9 +119,11 @@ body
   color: #444;
   border-right: solid 1px #333;
   align-self: stretch;
+  width: 150px;
+  text-align: center;
 }
 
 #output > .cell > .cell-output
 {
-  padding-left: 10px;
+  padding-left: 15px;
 }

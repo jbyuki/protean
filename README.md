@@ -11,7 +11,9 @@ Status:
 - [ ] Restart kernel
 - [ ] Multiple kernels
 - [x] browser frontend
+- [ ] error display in frontend
 - [x] redirect stdout to frontend
+- [ ] display latex in frontend
 - [ ] redirect plots to frontend
 
 Motivation
