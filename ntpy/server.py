@@ -18,6 +18,8 @@ class FrontendWriter:
     self.writer = writer
   def send(self, s):
     self.writer.write(text_ws_msg(s))
+  async def drain(self):
+    await self.writer.drain()
 
 
 class PrintStream:
@@ -68,13 +70,16 @@ async def start_executor():
         print(f"Exception {e}")
         for frontend_writer in frontend_writers:
           frontend_writer.send(msg_exception(str(e), tangled[name]))
+          await frontend_writer.drain()
 
 
     pending_sections = []
 
     if "loop" in tangled:
+      name = "loop"
       code = "\n".join(tangled["loop"])
       try:
+        frontend_writer.send(msg_notify_running("loop")) 
         sys.stdout = PrintStream()
 
         exec(code)
@@ -86,10 +91,18 @@ async def start_executor():
         print(f"Exception {e}")
         for frontend_writer in frontend_writers:
           frontend_writer.send(msg_exception(str(e), tangled[name]))
+          await frontend_writer.drain()
+        del tangled["loop"]
+        for frontend_writer in frontend_writers:
+          frontend_writer.send(msg_notify_idle()) 
+          await frontend_writer.drain()
+
 
     if "loop" not in tangled or "".join(tangled["loop"]) == "":
       for frontend_writer in frontend_writers:
         frontend_writer.send(msg_notify_idle()) 
+        await frontend_writer.drain()
+
       await message_received_event.wait()
       message_received_event.clear()
 
@@ -408,6 +421,7 @@ async def on_connect(reader, writer):
 		await writer.drain()
 
 		message_received_event.set()
+
 		await asyncio.sleep(0)
 
 	print("Client disconnected.")

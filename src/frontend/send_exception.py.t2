@@ -10,3 +10,4 @@ def msg_exception(txt, lines):
 ;; send exception to frontend
 for frontend_writer in frontend_writers:
   frontend_writer.send(msg_exception(str(e), tangled[name]))
+  await frontend_writer.drain()

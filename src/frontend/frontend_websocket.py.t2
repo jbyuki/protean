@@ -107,6 +107,8 @@ class FrontendWriter:
     self.writer = writer
   def send(self, s):
     self.writer.write(text_ws_msg(s))
+  async def drain(self):
+    await self.writer.drain()
 
 ;; variables
 frontend_writers = []

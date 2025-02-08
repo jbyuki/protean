@@ -40,9 +40,10 @@ except Exception as e:
 
 ;; execute loop section if defined
 if "loop" in tangled:
+  name = "loop"
   code = "\n".join(tangled["loop"])
   try:
-    ; if enough delay passed notify frontend that loop is running
+    ; notify frontend that loop is running
     ; redirect to custom stdout
     exec(code)
     ; restore to default stdout
@@ -50,6 +51,8 @@ if "loop" in tangled:
     ; restore to default stdout
     print(f"Exception {e}")
     ; send exception to frontend
+    ; kill loop if exception
+    ; notify front that kernel is idle
 
 ;; if no pending sections go into deep sleep
 if "loop" not in tangled or "".join(tangled["loop"]) == "":
@@ -69,3 +72,6 @@ global message_received_event
 
 ;; notify that message has been received
 message_received_event.set()
+
+;; kill loop if exception
+del tangled["loop"]

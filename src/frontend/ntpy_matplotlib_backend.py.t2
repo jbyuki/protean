@@ -1,0 +1,9 @@
+:: ../../ntpy/ntpy_matplotlib_backend.py
+; imports
+; figure canvas
+; register backend 
+
+;; imports
+from matplotlib.backends.backend_svg import _BackendSVG, FigureCanvasSVG
+
+;; figure canvas

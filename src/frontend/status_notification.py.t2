@@ -23,3 +23,7 @@ def msg_notify_idle():
 ;; notify front that kernel is idle
 for frontend_writer in frontend_writers:
   frontend_writer.send(msg_notify_idle()) 
+  await frontend_writer.drain()
+
+;; notify frontend that loop is running
+frontend_writer.send(msg_notify_running("loop")) 
