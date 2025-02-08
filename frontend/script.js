@@ -126,7 +126,40 @@ window.onload = () =>
         }
 
         cell_output.innerText = code + '\n' + msg.data.text;
+
         output.appendChild(cell);
+
+        window.scrollTo(0, document.body.scrollHeight);
+
+      }
+
+      else if(msg.cmd == "svg_output")
+      {
+        const output = document.getElementById("output");
+
+        const today = new Date();
+        const time_iso = today.toLocaleString();
+
+        const cell = document.createElement("div");
+        cell.classList.add("cell");
+
+        const cell_date = document.createElement("div");
+        cell_date.classList.add("cell-date");
+        cell_date.textContent = time_iso
+        cell.appendChild(cell_date);
+
+        const cell_output = document.createElement("div");
+        cell_output.classList.add("cell-output");
+        cell.appendChild(cell_output);
+
+        var svg_content = msg.data.content;
+        const first_index = svg_content.indexOf('<svg');
+        svg_content = svg_content.slice(first_index);
+
+        cell_output.innerHTML = svg_content;
+        output.appendChild(cell);
+
+        window.scrollTo(0, document.body.scrollHeight);
 
       }
 

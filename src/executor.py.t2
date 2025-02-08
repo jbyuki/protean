@@ -33,10 +33,13 @@ try:
   ; redirect to custom stdout
   exec(code)
   ; restore to default stdout
+  ; flush matplotlib figures
+  ; if any pending figure send it
 except Exception as e:
   ; restore to default stdout
   print(f"Exception {e}")
   ; send exception to frontend
+  ; flush matplotlib figures
 
 ;; execute loop section if defined
 if "loop" in tangled:
@@ -47,12 +50,14 @@ if "loop" in tangled:
     ; redirect to custom stdout
     exec(code)
     ; restore to default stdout
+    ; flush matplotlib figures
   except Exception as e:
     ; restore to default stdout
     print(f"Exception {e}")
     ; send exception to frontend
     ; kill loop if exception
     ; notify front that kernel is idle
+    ; flush matplotlib figures
 
 ;; if no pending sections go into deep sleep
 if "loop" not in tangled or "".join(tangled["loop"]) == "":

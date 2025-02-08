@@ -5,6 +5,12 @@ import base64
 
 import struct
 
+import matplotlib
+
+from ntpy_matplotlib_backend import flush_figures
+
+import io
+
 import sys
 from io import StringIO
 
@@ -20,7 +26,6 @@ class FrontendWriter:
     self.writer.write(text_ws_msg(s))
   async def drain(self):
     await self.writer.drain()
-
 
 class PrintStream:
   def __init__(self):
@@ -64,6 +69,21 @@ async def start_executor():
         exec(code)
         sys.stdout = sys.__stdout__
 
+        new_figs = flush_figures()
+        print("NEW FIGS ", len(new_figs))
+
+        if len(new_figs) > 0:
+          svgs = []
+          for fig in new_figs:
+            f = io.StringIO()
+            fig.print_svg(f)
+            svgs.append(f.getvalue())
+
+          for frontend_writer in frontend_writers:
+            for svg in svgs:
+              frontend_writer.send(msg_svg_output(svg))
+              await frontend_writer.drain()
+
       except Exception as e:
         sys.stdout = sys.__stdout__
 
@@ -71,6 +91,9 @@ async def start_executor():
         for frontend_writer in frontend_writers:
           frontend_writer.send(msg_exception(str(e), tangled[name]))
           await frontend_writer.drain()
+        new_figs = flush_figures()
+        print("NEW FIGS ", len(new_figs))
+
 
 
     pending_sections = []
@@ -85,6 +108,9 @@ async def start_executor():
         exec(code)
         sys.stdout = sys.__stdout__
 
+        new_figs = flush_figures()
+        print("NEW FIGS ", len(new_figs))
+
       except Exception as e:
         sys.stdout = sys.__stdout__
 
@@ -96,6 +122,9 @@ async def start_executor():
         for frontend_writer in frontend_writers:
           frontend_writer.send(msg_notify_idle()) 
           await frontend_writer.drain()
+
+        new_figs = flush_figures()
+        print("NEW FIGS ", len(new_figs))
 
 
     if "loop" not in tangled or "".join(tangled["loop"]) == "":
@@ -296,6 +325,14 @@ def text_ws_msg(txt):
   msg += txt
   return struct.pack(f"{len(msg)}B", *msg)
 
+def msg_svg_output(svg_content):
+  global task_id
+
+  msg = {}
+  msg["cmd"] = "svg_output"
+  msg["data"] = { "task_id": task_id, "content": svg_content }
+  return json.dumps(msg)
+
 def msg_output_txt(txt):
   global task_id
 
@@ -359,6 +396,8 @@ def tangle_rec(name, sections, tangled, parent_section, blacklist):
 	return lines
 
 async def start_server(host='localhost', port=8089):
+	matplotlib.use('module://ntpy_matplotlib_backend')
+
 	server = await asyncio.start_server(on_connect, host, port)
 	print(f"Server started on {port}")
 	async with server:

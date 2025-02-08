@@ -1,3 +1,42 @@
 ;;; ../ntpy-server
-;; classes
+;; imports
+import matplotlib
 
+;; use ntpy matplotlib backend
+matplotlib.use('module://ntpy_matplotlib_backend')
+
+;; imports
+from ntpy_matplotlib_backend import flush_figures
+
+;; flush matplotlib figures
+new_figs = flush_figures()
+print("NEW FIGS ", len(new_figs))
+
+;; if any pending figure send it
+if len(new_figs) > 0:
+  ; generate svgs foreach figure
+  ; send all svgs to frontends
+
+;; imports
+import io
+
+;; generate svgs foreach figure
+svgs = []
+for fig in new_figs:
+  f = io.StringIO()
+  fig.print_svg(f)
+  svgs.append(f.getvalue())
+
+;; define functions
+def msg_svg_output(svg_content):
+  ; get task id
+  msg = {}
+  msg["cmd"] = "svg_output"
+  msg["data"] = { "task_id": task_id, "content": svg_content }
+  return json.dumps(msg)
+
+;; send all svgs to frontends
+for frontend_writer in frontend_writers:
+  for svg in svgs:
+    frontend_writer.send(msg_svg_output(svg))
+    await frontend_writer.drain()

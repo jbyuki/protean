@@ -12,6 +12,7 @@ import json
 
 ;; define functions
 async def start_server(host='localhost', port=8089):
+	; use ntpy matplotlib backend
 	server = await asyncio.start_server(on_connect, host, port)
 	print(f"Server started on {port}")
 	async with server:
