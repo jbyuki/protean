@@ -5,10 +5,10 @@ import base64
 
 import struct
 
-import re
-
 import sys
 from io import StringIO
+
+import re
 
 import asyncio
 import json
@@ -24,19 +24,20 @@ class PrintStream:
   def __init__(self):
     pass
   def write(self, s):
+    global frontend_writers
     for frontend_writer in frontend_writers:
       frontend_writer.send(msg_output_txt(s)) 
 
 
 frontend_writers = []
 
+task_id = 0
+
+import time
 tangled = {}
 
 pending_sections = []
 
-task_id = 0
-
-import time
 async def start_executor():
   global pending_sections
   global tangled
@@ -65,6 +66,8 @@ async def start_executor():
         sys.stdout = sys.__stdout__
 
         print(f"Exception {e}")
+        for frontend_writer in frontend_writers:
+          frontend_writer.send(msg_exception(str(e), tangled[name]))
 
 
     pending_sections = []
@@ -81,6 +84,8 @@ async def start_executor():
         sys.stdout = sys.__stdout__
 
         print(f"Exception {e}")
+        for frontend_writer in frontend_writers:
+          frontend_writer.send(msg_exception(str(e), tangled[name]))
 
     if "loop" not in tangled or "".join(tangled["loop"]) == "":
       for frontend_writer in frontend_writers:
@@ -278,6 +283,34 @@ def text_ws_msg(txt):
   msg += txt
   return struct.pack(f"{len(msg)}B", *msg)
 
+def msg_output_txt(txt):
+  global task_id
+
+  msg = {}
+  msg["cmd"] = "output"
+  msg["data"] = { "task_id": task_id, "text": txt }
+  return json.dumps(msg)
+
+def msg_exception(txt, lines):
+  global task_id
+
+  msg = {}
+  msg["cmd"] = "exception"
+  msg["data"] = { "task_id": task_id, "text": txt, "lines": lines }
+  return json.dumps(msg)
+
+def msg_notify_running(section_name):
+  msg = {}
+  msg["cmd"] = "notify"
+  msg["data"] = { "status": "running", "section": section_name }
+  return json.dumps(msg)
+
+def msg_notify_idle():
+  msg = {}
+  msg["cmd"] = "notify"
+  msg["data"] = { "status": "idle" }
+  return json.dumps(msg)
+
 def tangle_rec(name, sections, tangled, parent_section, blacklist):
 	if name in blacklist:
 		return []
@@ -311,14 +344,6 @@ def tangle_rec(name, sections, tangled, parent_section, blacklist):
 	blacklist.pop()
 
 	return lines
-
-def msg_output_txt(txt):
-  global task_id
-
-  msg = {}
-  msg["cmd"] = "output"
-  msg["data"] = { "task_id": task_id, "text": txt }
-  return json.dumps(msg)
 
 async def start_server(host='localhost', port=8089):
 	server = await asyncio.start_server(on_connect, host, port)
@@ -388,18 +413,6 @@ async def on_connect(reader, writer):
 	print("Client disconnected.")
 	writer.close()
 	await writer.wait_closed()
-
-def msg_notify_running(section_name):
-  msg = {}
-  msg["cmd"] = "notify"
-  msg["data"] = { "status": "running", "section": section_name }
-  return json.dumps(msg)
-
-def msg_notify_idle():
-  msg = {}
-  msg["cmd"] = "notify"
-  msg["data"] = { "status": "idle" }
-  return json.dumps(msg)
 
 
 if __name__ == "__main__":

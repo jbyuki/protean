@@ -64,6 +64,7 @@ if(typeof event.data == "string")
 {
   ; decode message json
   ; if message is output
+  ; if message is exception
   ; if message is notify
 }
 
@@ -229,3 +230,35 @@ if(idle_request !== null)
   clearInterval(idle_request);
   idle_request = null;
 }
+
+;; if message is exception
+else if(msg.cmd == "exception")
+{
+  ; get output element
+  ; get current date
+  ; create exception cell in output element
+  ; set text content with code and exception message
+  ; append cell to output
+}
+
+;; create exception cell in output element
+const cell = document.createElement("div");
+cell.classList.add("cell");
+
+const cell_date = document.createElement("div");
+cell_date.classList.add("cell-date");
+cell_date.textContent = time_iso
+cell.appendChild(cell_date);
+
+const cell_output = document.createElement("div");
+cell_output.classList.add("cell-exception");
+cell.appendChild(cell_output);
+
+;; set text content with code and exception message
+var code = "";
+for(let i=0; i<msg.data.lines.length; i++)
+{
+  code += `${i+1}  ${msg.data.lines[i]}\n`;
+}
+
+cell_output.innerText = code + '\n' + msg.data.text;

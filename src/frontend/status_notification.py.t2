@@ -1,4 +1,4 @@
-;;; ntpy-server
+;;; ../ntpy-server
 ;; define functions
 def msg_notify_running(section_name):
   msg = {}

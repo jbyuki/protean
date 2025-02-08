@@ -1,4 +1,4 @@
-;;; ntpy-server
+;;; ../ntpy-server
 ;; do routing
 elif route == b'/ws':
   ; read websocket handshake

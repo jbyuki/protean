@@ -36,6 +36,7 @@ try:
 except Exception as e:
   ; restore to default stdout
   print(f"Exception {e}")
+  ; send exception to frontend
 
 ;; execute loop section if defined
 if "loop" in tangled:
@@ -48,6 +49,7 @@ if "loop" in tangled:
   except Exception as e:
     ; restore to default stdout
     print(f"Exception {e}")
+    ; send exception to frontend
 
 ;; if no pending sections go into deep sleep
 if "loop" not in tangled or "".join(tangled["loop"]) == "":

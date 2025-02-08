@@ -100,6 +100,36 @@ window.onload = () =>
 
       }
 
+      else if(msg.cmd == "exception")
+      {
+        const output = document.getElementById("output");
+
+        const today = new Date();
+        const time_iso = today.toLocaleString();
+
+        const cell = document.createElement("div");
+        cell.classList.add("cell");
+
+        const cell_date = document.createElement("div");
+        cell_date.classList.add("cell-date");
+        cell_date.textContent = time_iso
+        cell.appendChild(cell_date);
+
+        const cell_output = document.createElement("div");
+        cell_output.classList.add("cell-exception");
+        cell.appendChild(cell_output);
+
+        var code = "";
+        for(let i=0; i<msg.data.lines.length; i++)
+        {
+          code += `${i+1}  ${msg.data.lines[i]}\n`;
+        }
+
+        cell_output.innerText = code + '\n' + msg.data.text;
+        output.appendChild(cell);
+
+      }
+
       else if(msg.cmd == "notify")
       {
         if(msg.data.status == "running")
@@ -121,6 +151,7 @@ window.onload = () =>
             clearInterval(idle_request);
             idle_request = null;
           }
+
 
           const kernel_status = document.getElementById("kernel-status").firstElementChild;
           kernel_status.textContent = "";
@@ -149,6 +180,7 @@ window.onload = () =>
             clearInterval(idle_request);
             idle_request = null;
           }
+
 
           idle_request = setInterval(() => {
             const nowTime = performance.now();

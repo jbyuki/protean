@@ -1,4 +1,4 @@
-;;; ntpy-server
+;;; ../ntpy-server
 ;; define functions
 async def start_frontend_server(host='localhost', port=8090):
 	server = await asyncio.start_server(on_frontend_connect, host, port)

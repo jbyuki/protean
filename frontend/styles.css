@@ -127,3 +127,9 @@ body
 {
   padding-left: 15px;
 }
+
+#output > .cell > .cell-exception
+{
+  padding-left: 15px;
+  color: #b66;
+}

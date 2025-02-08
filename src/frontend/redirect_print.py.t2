@@ -1,4 +1,4 @@
-;;; ntpy-server
+;;; ../ntpy-server
 ;; imports
 import sys
 from io import StringIO
@@ -25,6 +25,7 @@ def msg_output_txt(txt):
   return json.dumps(msg)
 
 ;; broadcast to all frontends
+global frontend_writers
 for frontend_writer in frontend_writers:
   frontend_writer.send(msg_output_txt(s)) 
 
