@@ -121,6 +121,7 @@ body
   align-self: stretch;
   width: 150px;
   text-align: center;
+  flex-shrink: 0;
 }
 
 #output > .cell > .cell-output
