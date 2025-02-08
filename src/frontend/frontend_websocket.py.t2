@@ -16,7 +16,6 @@ for line in http_msg[1:]:
   key = line[:sep].strip()
   val = line[sep+1:].strip()
   ws_keys[key] = val
-  print(line)
 
 assert(ws_keys["Upgrade"] == "websocket")
 assert(ws_keys["Connection"] == "Upgrade")
@@ -97,9 +96,6 @@ if opcode == 0x1:
   s = ""
   for c in readbuffer:
     s += chr(c)
-  print(s)
-else:
-  print(readbuffer)
 
 ;; classes
 class FrontendWriter:

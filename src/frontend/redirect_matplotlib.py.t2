@@ -10,7 +10,6 @@ from ntpy_matplotlib_backend import flush_figures
 
 ;; flush matplotlib figures
 new_figs = flush_figures()
-print("NEW FIGS ", len(new_figs))
 
 ;; if any pending figure send it
 if len(new_figs) > 0:

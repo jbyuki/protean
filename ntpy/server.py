@@ -70,7 +70,6 @@ async def start_executor():
         sys.stdout = sys.__stdout__
 
         new_figs = flush_figures()
-        print("NEW FIGS ", len(new_figs))
 
         if len(new_figs) > 0:
           svgs = []
@@ -92,7 +91,6 @@ async def start_executor():
           frontend_writer.send(msg_exception(str(e), tangled[name]))
           await frontend_writer.drain()
         new_figs = flush_figures()
-        print("NEW FIGS ", len(new_figs))
 
 
 
@@ -109,7 +107,6 @@ async def start_executor():
         sys.stdout = sys.__stdout__
 
         new_figs = flush_figures()
-        print("NEW FIGS ", len(new_figs))
 
       except Exception as e:
         sys.stdout = sys.__stdout__
@@ -124,7 +121,6 @@ async def start_executor():
           await frontend_writer.drain()
 
         new_figs = flush_figures()
-        print("NEW FIGS ", len(new_figs))
 
 
     if "loop" not in tangled or "".join(tangled["loop"]) == "":
@@ -193,9 +189,6 @@ async def on_frontend_connect(reader, writer):
 			  s = ""
 			  for c in readbuffer:
 			    s += chr(c)
-			  print(s)
-			else:
-			  print(readbuffer)
 
 		else:
 			http_msg = []
@@ -227,7 +220,6 @@ async def on_frontend_connect(reader, writer):
 					continue
 				route = rest[:space]
 				rest = rest[space+1:]
-				print(f"GET {route}")
 
 				if route == b'/' or route == b'/script.js' or route == b'/styles.css':
 					filename = route[1:].decode('utf-8')
@@ -261,7 +253,6 @@ async def on_frontend_connect(reader, writer):
 				    key = line[:sep].strip()
 				    val = line[sep+1:].strip()
 				    ws_keys[key] = val
-				    print(line)
 
 				  assert(ws_keys["Upgrade"] == "websocket")
 				  assert(ws_keys["Connection"] == "Upgrade")
