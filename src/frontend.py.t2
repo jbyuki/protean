@@ -66,6 +66,7 @@ if space == -1:
 	continue
 route = rest[:space]
 rest = rest[space+1:]
+print(f"GET {route}")
 
 ;; define functions
 async def write_http_message(writer, lines, body=None):
@@ -76,12 +77,29 @@ async def write_http_message(writer, lines, body=None):
 		writer.write(body)
 	await writer.drain()
 
+;; imports
+from pathlib import Path
+
 ;;- do routing
-if route == b'/':
-	content = '<!doctype html><html><head><meta=charset=utf-8><title>blah</title></head><body><p>Hello world :)</p></body></html>'.encode('utf-8')
+if route == b'/' or route == b'/script.js' or route == b'/styles.css':
+	filename = route[1:].decode('utf-8')
+	if filename == "":
+		filename = "index.html"
+	path = Path(__file__)
+	f = open(path.parent.parent / "frontend" / filename, "r")
+	content = f.read().encode('utf-8')
+
+	content_type = ""
+	if filename == 'index.html':
+		content_type = 'text/html'
+	elif filename == 'script.js':
+		content_type = 'text/javascript'
+	elif filename == 'styles.css':
+		content_type = 'text/css'
+
 	msg_lines = [
 		"HTTP/1.1 200 OK",
 		f"Content-Length: {len(content)}",
-		"Content-Type: text/html; charset=UTF-8",
+		f"Content-Type: {content_type}; charset=UTF-8",
 	]
 	await write_http_message(writer, msg_lines, content)

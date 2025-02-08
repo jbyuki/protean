@@ -1,7 +1,3 @@
 :: ../ntpy/ntpy.py
 ; imports
 ; define functions
-
-;; define functions
-def hello():
-	print(f"Hello from {__file__}")
