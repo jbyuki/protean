@@ -80,3 +80,5 @@ message_received_event.set()
 
 ;; kill loop if exception
 del tangled["loop"]
+global sections
+del sections["loop"]

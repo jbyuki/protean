@@ -14,8 +14,11 @@ data = msg["data"]
 assert("name" in data)
 assert("lines" in data)
 
-;; client variables
+;; variables
 sections = {}
+
+;; client variables
+global sections
 
 ;; add or replace section to database
 name = data["name"]

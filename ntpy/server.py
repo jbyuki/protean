@@ -44,6 +44,8 @@ task_id = 0
 import time
 loop_status_sent = False
 
+sections = {}
+
 tangled = {}
 
 pending_sections = []
@@ -127,6 +129,8 @@ async def start_executor():
           frontend_writer.send(msg_exception(str(e), tangled[name]))
           await frontend_writer.drain()
         del tangled["loop"]
+        global sections
+        del sections["loop"]
         for frontend_writer in frontend_writers:
           frontend_writer.send(msg_notify_idle()) 
           await frontend_writer.drain()
@@ -429,7 +433,7 @@ async def on_connect(reader, writer):
 	global message_received_event
 
 	print("Client connected.")
-	sections = {}
+	global sections
 
 	global tangled
 
@@ -480,7 +484,7 @@ async def on_connect(reader, writer):
 		  sections.pop("loop", None)
 		  del tangled["loop"]
 		else:
-			status = f"Unknown command {msg["cmd"]}"
+			status = f"Unknown command {msg['cmd']}"
 
 		response = json.dumps({"status" : status}) + '\n'
 		writer.write(response.encode())

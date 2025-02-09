@@ -54,7 +54,7 @@ await writer.drain()
 
 ;; if not handeld fail
 else:
-	status = f"Unknown command {msg["cmd"]}"
+	status = f"Unknown command {msg['cmd']}"
 
 ;; if standalone start server
 
