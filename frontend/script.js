@@ -168,6 +168,7 @@ window.onload = () =>
           a.download = `figure_${new Date().toJSON()}.svg`;
           a.click();
           URL.revokeObjectURL(url);
+
         };
 
         cell.appendChild(cell_download);
@@ -253,6 +254,10 @@ window.onload = () =>
 
       }
 
+      else if(msg.cmd == "log")
+      {
+        console.log(msg.data.text);
+      }
     }
 
   };

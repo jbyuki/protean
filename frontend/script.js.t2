@@ -67,6 +67,7 @@ if(typeof event.data == "string")
   ; if message is exception
   ; if message is svg output
   ; if message is notify
+  ; if message is log
 }
 
 ;; decode message json
@@ -308,3 +309,9 @@ a.href = url;
 a.download = `figure_${new Date().toJSON()}.svg`;
 a.click();
 URL.revokeObjectURL(url);
+
+;; if message is log
+else if(msg.cmd == "log")
+{
+  console.log(msg.data.text);
+}

@@ -42,6 +42,8 @@ frontend_writers = []
 task_id = 0
 
 import time
+loop_status_sent = False
+
 tangled = {}
 
 pending_sections = []
@@ -54,6 +56,8 @@ async def start_executor():
 
   global frontend_writers
 
+  global loop_status_sent 
+
   while True:
     for name in pending_sections:
       if name in tangled:
@@ -61,6 +65,7 @@ async def start_executor():
       else:
         continue
 
+      loop_status_sent = False
       for frontend_writer in frontend_writers:
         frontend_writer.send(msg_notify_running(name)) 
 
@@ -103,7 +108,10 @@ async def start_executor():
       name = "loop"
       code = "\n".join(tangled["loop"])
       try:
-        frontend_writer.send(msg_notify_running("loop")) 
+        if not loop_status_sent:
+          for frontend_writer in frontend_writers:
+            frontend_writer.send(msg_notify_running("loop")) 
+          loop_status_sent = True
         sys.stdout = PrintStream()
 
         exec(code)
@@ -319,6 +327,15 @@ def text_ws_msg(txt):
   msg += txt
   return struct.pack(f"{len(msg)}B", *msg)
 
+def msg_log(text):
+  msg = {}
+  msg["cmd"] = "log"
+  msg["data"] = { "text": text }
+  return json.dumps(msg)
+
+def log_debug(text):
+  for frontend_writer in frontend_writers:
+    frontend_writer.send(msg_log(text)) 
 def msg_svg_output(svg_content):
   global task_id
 
@@ -347,12 +364,16 @@ def msg_notify_running(section_name):
   msg = {}
   msg["cmd"] = "notify"
   msg["data"] = { "status": "running", "section": section_name }
+  global last_idle
+  last_idle = False
   return json.dumps(msg)
 
 def msg_notify_idle():
   msg = {}
   msg["cmd"] = "notify"
   msg["data"] = { "status": "idle" }
+  global loop_status_sent
+  loop_status_sent = False
   return json.dumps(msg)
 
 def tangle_rec(name, sections, tangled, parent_section, blacklist):
@@ -442,6 +463,7 @@ async def on_connect(reader, writer):
 
 			blacklist = []
 			for section_name in sections.keys():
+				log_debug(section_name)
 				tangle_rec(section_name, sections, tangled, parent_section, blacklist)
 
 			if name != "loop":
@@ -452,6 +474,7 @@ async def on_connect(reader, writer):
 
 		elif msg["cmd"] == "killLoop":
 		  sections.pop("loop", None)
+		  del tangled["loop"]
 		else:
 			status = f"Unknown command {msg["cmd"]}"
 

@@ -48,6 +48,7 @@ tangled = {}
 ; clear retangling all
 blacklist = []
 for section_name in sections.keys():
+	log_debug(section_name)
 	tangle_rec(section_name, sections, tangled, parent_section, blacklist)
 
 ;; if line is literate reference recurse

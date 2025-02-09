@@ -1,15 +1,24 @@
 ;;; ../ntpy-server
+;; variables
+loop_status_sent = False
+
 ;; define functions
 def msg_notify_running(section_name):
   msg = {}
   msg["cmd"] = "notify"
   msg["data"] = { "status": "running", "section": section_name }
+  global last_idle
+  last_idle = False
   return json.dumps(msg)
 
 ;; executor variables
 global frontend_writers
 
+;; executor variables
+global loop_status_sent 
+
 ;; notify front that kernel is running section
+loop_status_sent = False
 for frontend_writer in frontend_writers:
   frontend_writer.send(msg_notify_running(name)) 
 
@@ -18,6 +27,8 @@ def msg_notify_idle():
   msg = {}
   msg["cmd"] = "notify"
   msg["data"] = { "status": "idle" }
+  global loop_status_sent
+  loop_status_sent = False
   return json.dumps(msg)
 
 ;; notify front that kernel is idle
@@ -26,4 +37,7 @@ for frontend_writer in frontend_writers:
   await frontend_writer.drain()
 
 ;; notify frontend that loop is running
-frontend_writer.send(msg_notify_running("loop")) 
+if not loop_status_sent:
+  for frontend_writer in frontend_writers:
+    frontend_writer.send(msg_notify_running("loop")) 
+  loop_status_sent = True

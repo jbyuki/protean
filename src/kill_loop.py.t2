@@ -2,3 +2,4 @@
 ;; handle message
 elif msg["cmd"] == "killLoop":
   sections.pop("loop", None)
+  del tangled["loop"]

@@ -1,0 +1,12 @@
+;;; ../ntpy-server
+;; define functions
+def msg_log(text):
+  msg = {}
+  msg["cmd"] = "log"
+  msg["data"] = { "text": text }
+  return json.dumps(msg)
+
+;; define functions
+def log_debug(text):
+  for frontend_writer in frontend_writers:
+    frontend_writer.send(msg_log(text)) 
