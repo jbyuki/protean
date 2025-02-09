@@ -127,6 +127,27 @@ body
 #output > .cell > .cell-output
 {
   padding-left: 15px;
+  flex-grow: 1;
+}
+
+#output > .cell > .cell-download
+{
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+#output > .cell > .cell-download p
+{
+  margin: 0;
+  padding: 0;
+}
+
+#output > .cell > .cell-download p:hover
+{
+  cursor: pointer;
+  color: #CCC;
 }
 
 #output > .cell > .cell-exception

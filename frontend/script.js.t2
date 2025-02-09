@@ -271,6 +271,7 @@ else if(msg.cmd == "svg_output")
   ; get output element
   ; get current date
   ; create cell in output element
+  ; append download button
   ; set svg content
   ; append cell to output
   ; scroll to bottom
@@ -283,3 +284,27 @@ svg_content = svg_content.slice(first_index);
 
 ;; set svg content
 cell_output.innerHTML = svg_content;
+
+;; append download button
+const cell_download = document.createElement("div");
+cell_download.classList.add("cell-download");
+
+const p = document.createElement("p");
+p.innerText = "Download";
+cell_download.appendChild(p);
+p.onclick = () => {
+  ; download svg content
+};
+
+cell.appendChild(cell_download);
+
+;; download svg content
+const blob = new Blob([svg_content], { type: "image/svg+xml" });
+const url = URL.createObjectURL(blob);
+const a = document.createElement("a");
+document.body.appendChild(a);
+a.style = "display: none";
+a.href = url;
+a.download = `figure_${new Date().toJSON()}.svg`;
+a.click();
+URL.revokeObjectURL(url);

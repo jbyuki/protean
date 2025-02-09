@@ -152,11 +152,32 @@ window.onload = () =>
         cell_output.classList.add("cell-output");
         cell.appendChild(cell_output);
 
+        const cell_download = document.createElement("div");
+        cell_download.classList.add("cell-download");
+
+        const p = document.createElement("p");
+        p.innerText = "Download";
+        cell_download.appendChild(p);
+        p.onclick = () => {
+          const blob = new Blob([svg_content], { type: "image/svg+xml" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          document.body.appendChild(a);
+          a.style = "display: none";
+          a.href = url;
+          a.download = `figure_${new Date().toJSON()}.svg`;
+          a.click();
+          URL.revokeObjectURL(url);
+        };
+
+        cell.appendChild(cell_download);
+
         var svg_content = msg.data.content;
         const first_index = svg_content.indexOf('<svg');
         svg_content = svg_content.slice(first_index);
 
         cell_output.innerHTML = svg_content;
+
         output.appendChild(cell);
 
         window.scrollTo(0, document.body.scrollHeight);
