@@ -1,6 +1,4 @@
 ;;; ../ntpy-server
-;; variables
-loop_status_sent = False
 
 ;; define functions
 def msg_notify_running(section_name):
@@ -11,33 +9,72 @@ def msg_notify_running(section_name):
   last_idle = False
   return json.dumps(msg)
 
+;; variables
+sent_sections = False
+
 ;; executor variables
 global frontend_writers
 
-;; executor variables
-global loop_status_sent 
+;; client variables
+global sent_sections
 
 ;; notify front that kernel is running section
-loop_status_sent = False
 for frontend_writer in frontend_writers:
   frontend_writer.send(msg_notify_running(name)) 
+sent_sections = True
 
 ;; define functions
 def msg_notify_idle():
   msg = {}
   msg["cmd"] = "notify"
   msg["data"] = { "status": "idle" }
-  global loop_status_sent
-  loop_status_sent = False
   return json.dumps(msg)
 
+;; executor variables
+global sent_sections
+
 ;; notify front that kernel is idle
-for frontend_writer in frontend_writers:
-  frontend_writer.send(msg_notify_idle()) 
-  await frontend_writer.drain()
+if sent_sections:
+  for frontend_writer in frontend_writers:
+    frontend_writer.send(msg_notify_idle()) 
+    await frontend_writer.drain()
+  sent_sections = False
+
+;; variables
+loop_last_run = False
+
+;; define functions
+def msg_notify_loop_run():
+  msg = {}
+  msg["cmd"] = "notify"
+  msg["data"] = { "status": "loop run" }
+  global loop_last_run
+  loop_last_run = True
+  return json.dumps(msg)
 
 ;; notify frontend that loop is running
-if not loop_status_sent:
+if not loop_last_run:
   for frontend_writer in frontend_writers:
-    frontend_writer.send(msg_notify_running("loop")) 
-  loop_status_sent = True
+    frontend_writer.send(msg_notify_loop_run()) 
+  loop_last_run = True
+
+;; executor variables
+global loop_last_run 
+
+;; client variables
+global loop_last_run 
+
+;; define functions
+def msg_notify_loop_stop():
+  msg = {}
+  msg["cmd"] = "notify"
+  msg["data"] = { "status": "loop stop" }
+  global loop_last_run
+  loop_last_run = False
+  return json.dumps(msg)
+
+;; notify front that loop is not running
+if loop_last_run:
+  for frontend_writer in frontend_writers:
+    frontend_writer.send(msg_notify_loop_stop()) 
+  loop_last_run = False

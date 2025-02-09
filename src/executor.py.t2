@@ -5,6 +5,7 @@ async def start_executor():
   ; executor variables
   while True:
     ; execute pending sections
+    ; notify front that kernel is idle
     ; clear pending sections
     ; execute loop section if defined
     ; if no pending sections go into deep sleep
@@ -13,7 +14,6 @@ async def start_executor():
 ;; execute pending sections
 for name in pending_sections:
   ; fetch code for section
-  ; notify front that kernel is running section
   ; execute code for section
 
 ;; clear pending sections
@@ -56,12 +56,11 @@ if "loop" in tangled:
     print(f"Exception {e}")
     ; send exception to frontend
     ; kill loop if exception
-    ; notify front that kernel is idle
+    ; notify front that loop is not running
     ; flush matplotlib figures
 
 ;; if no pending sections go into deep sleep
 if "loop" not in tangled or "".join(tangled["loop"]) == "":
-  ; notify front that kernel is idle
   await message_received_event.wait()
   message_received_event.clear()
 

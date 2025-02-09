@@ -42,7 +42,9 @@ frontend_writers = []
 task_id = 0
 
 import time
-loop_status_sent = False
+sent_sections = False
+
+loop_last_run = False
 
 sections = {}
 
@@ -58,7 +60,9 @@ async def start_executor():
 
   global frontend_writers
 
-  global loop_status_sent 
+  global sent_sections
+
+  global loop_last_run 
 
   while True:
     for name in pending_sections:
@@ -66,10 +70,6 @@ async def start_executor():
         code = "\n".join(tangled[name])
       else:
         continue
-
-      loop_status_sent = False
-      for frontend_writer in frontend_writers:
-        frontend_writer.send(msg_notify_running(name)) 
 
       try:
         sys.stdout = PrintStream()
@@ -104,16 +104,23 @@ async def start_executor():
 
 
 
+    if sent_sections:
+      for frontend_writer in frontend_writers:
+        frontend_writer.send(msg_notify_idle()) 
+        await frontend_writer.drain()
+      sent_sections = False
+
     pending_sections = []
 
     if "loop" in tangled:
       name = "loop"
       code = "\n".join(tangled["loop"])
       try:
-        if not loop_status_sent:
+        if not loop_last_run:
           for frontend_writer in frontend_writers:
-            frontend_writer.send(msg_notify_running("loop")) 
-          loop_status_sent = True
+            frontend_writer.send(msg_notify_loop_run()) 
+          loop_last_run = True
+
         sys.stdout = PrintStream()
 
         exec(code)
@@ -131,18 +138,14 @@ async def start_executor():
         del tangled["loop"]
         global sections
         del sections["loop"]
-        for frontend_writer in frontend_writers:
-          frontend_writer.send(msg_notify_idle()) 
-          await frontend_writer.drain()
-
+        if loop_last_run:
+          for frontend_writer in frontend_writers:
+            frontend_writer.send(msg_notify_loop_stop()) 
+          loop_last_run = False
         new_figs = flush_figures()
 
 
     if "loop" not in tangled or "".join(tangled["loop"]) == "":
-      for frontend_writer in frontend_writers:
-        frontend_writer.send(msg_notify_idle()) 
-        await frontend_writer.drain()
-
       await message_received_event.wait()
       message_received_event.clear()
 
@@ -376,8 +379,22 @@ def msg_notify_idle():
   msg = {}
   msg["cmd"] = "notify"
   msg["data"] = { "status": "idle" }
-  global loop_status_sent
-  loop_status_sent = False
+  return json.dumps(msg)
+
+def msg_notify_loop_run():
+  msg = {}
+  msg["cmd"] = "notify"
+  msg["data"] = { "status": "loop run" }
+  global loop_last_run
+  loop_last_run = True
+  return json.dumps(msg)
+
+def msg_notify_loop_stop():
+  msg = {}
+  msg["cmd"] = "notify"
+  msg["data"] = { "status": "loop stop" }
+  global loop_last_run
+  loop_last_run = False
   return json.dumps(msg)
 
 def tangle_rec(name, sections, tangled, parent_section, blacklist, prefix):
@@ -438,6 +455,10 @@ async def on_connect(reader, writer):
 	global message_received_event
 
 	print("Client connected.")
+	global sent_sections
+
+	global loop_last_run 
+
 	global sections
 
 	global tangled
@@ -467,6 +488,10 @@ async def on_connect(reader, writer):
 			name = data["name"]
 			lines = data["lines"]
 			sections[name] = lines
+
+			for frontend_writer in frontend_writers:
+			  frontend_writer.send(msg_notify_running(name)) 
+			sent_sections = True
 
 			tangled = {}
 			parent_section = {}
@@ -502,6 +527,10 @@ async def on_connect(reader, writer):
 		elif msg["cmd"] == "killLoop":
 		  sections.pop("loop", None)
 		  del tangled["loop"]
+		  if loop_last_run:
+		    for frontend_writer in frontend_writers:
+		      frontend_writer.send(msg_notify_loop_stop()) 
+		    loop_last_run = False
 		else:
 			status = f"Unknown command {msg['cmd']}"
 

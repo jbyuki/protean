@@ -3,6 +3,7 @@
 if msg["cmd"] == "execute":
 	; check message format for execute
 	; add or replace section to database
+	; notify front that kernel is running section
 	; retangle all sections
 	; add or replace parent section to running sections
 	; increase task id

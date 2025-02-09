@@ -7,6 +7,8 @@ var idle_request = null;
 
 var endAnimTime = performance.now();
 
+var loop_running = false;
+
 window.onload = () =>
 {
   const status = document.getElementById("connection-status");
@@ -54,6 +56,7 @@ window.onload = () =>
   };
 
   socket.onmessage = (event) => {
+    console.log(event);
     if(typeof event.data == "string")
     {
       const msg = JSON.parse(event.data);
@@ -244,14 +247,39 @@ window.onload = () =>
             if(status_animation === null && nowTime - endAnimTime > 1000)
             {
               const kernel_status = document.getElementById("kernel-status").firstElementChild;
-              kernel_status.textContent = "idle";
-              kernel_status.style.color = "#444";
+              if(loop_running)
+              {
+                kernel_status.textContent = "loop";
+                kernel_status.style.color = "#888";
+              }
+              else
+              {
+                kernel_status.textContent = "idle";
+                kernel_status.style.color = "#444";
+              }
+
               clearInterval(idle_request);
               idle_request = null;
             }
 
           }, 100);
 
+        }
+
+        else if(msg.data.status == "loop run")
+        {
+          const kernel_status = document.getElementById("kernel-status").firstElementChild;
+          loop_running = true;
+          kernel_status.textContent = "loop";
+          kernel_status.style.color = "#888";
+        }
+
+        else if(msg.data.status == "loop stop")
+        {
+          const kernel_status = document.getElementById("kernel-status").firstElementChild;
+          loop_running = false;
+          kernel_status.textContent = "idle";
+          kernel_status.style.color = "#444";
         }
 
       }

@@ -3,3 +3,4 @@
 elif msg["cmd"] == "killLoop":
   sections.pop("loop", None)
   del tangled["loop"]
+  ; notify front that loop is not running

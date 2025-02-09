@@ -24,6 +24,7 @@ socket.onclose = (event) => {
 };
 
 socket.onmessage = (event) => {
+  console.log(event);
   ; if message is text
   ; if message is binary
 };
@@ -143,6 +144,8 @@ else if(msg.cmd == "notify")
 {
   ; if message notify is running
   ; if message notify is idle
+  ; if message notify is loop run
+  ; if message notify is loop stop
 }
 
 ;; if message notify is running
@@ -222,8 +225,7 @@ endAnimTime = performance.now();
 if(status_animation === null && nowTime - endAnimTime > 1000)
 {
   const kernel_status = document.getElementById("kernel-status").firstElementChild;
-  kernel_status.textContent = "idle";
-  kernel_status.style.color = "#444";
+  ; reset to idle depending if loop is running
   clearInterval(idle_request);
   idle_request = null;
 }
@@ -233,6 +235,39 @@ if(idle_request !== null)
 {
   clearInterval(idle_request);
   idle_request = null;
+}
+
+;; variables
+var loop_running = false;
+
+;; reset to idle depending if loop is running
+if(loop_running)
+{
+  kernel_status.textContent = "loop";
+  kernel_status.style.color = "#888";
+}
+else
+{
+  kernel_status.textContent = "idle";
+  kernel_status.style.color = "#444";
+}
+
+;; if message notify is loop run
+else if(msg.data.status == "loop run")
+{
+  const kernel_status = document.getElementById("kernel-status").firstElementChild;
+  loop_running = true;
+  kernel_status.textContent = "loop";
+  kernel_status.style.color = "#888";
+}
+
+;; if message notify is loop stop
+else if(msg.data.status == "loop stop")
+{
+  const kernel_status = document.getElementById("kernel-status").firstElementChild;
+  loop_running = false;
+  kernel_status.textContent = "idle";
+  kernel_status.style.color = "#444";
 }
 
 ;; if message is exception
