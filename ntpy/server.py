@@ -77,13 +77,14 @@ async def start_executor():
           for fig in new_figs:
             f = io.StringIO()
             plt.tight_layout()
-            fig.print_svg(f)
+            fig.figure.savefig(f, transparent=True)
             svgs.append(f.getvalue())
 
           for frontend_writer in frontend_writers:
             for svg in svgs:
               frontend_writer.send(msg_svg_output(svg))
               await frontend_writer.drain()
+
 
       except Exception as e:
         sys.stdout = sys.__stdout__
@@ -391,6 +392,12 @@ def tangle_rec(name, sections, tangled, parent_section, blacklist):
 async def start_server(host='localhost', port=8089):
 	matplotlib.use('module://ntpy_matplotlib_backend')
 
+	params = {"ytick.color" : "w",
+	          "xtick.color" : "w",
+	          "axes.titlecolor" : "w",
+	          "axes.labelcolor" : "w",
+	          "axes.edgecolor" : "w"}
+	plt.rcParams.update(params)
 	server = await asyncio.start_server(on_connect, host, port)
 	print(f"Server started on {port}")
 	async with server:

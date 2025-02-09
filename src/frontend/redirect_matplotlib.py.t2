@@ -25,7 +25,7 @@ svgs = []
 for fig in new_figs:
   f = io.StringIO()
   plt.tight_layout()
-  fig.print_svg(f)
+  fig.figure.savefig(f, transparent=True)
   svgs.append(f.getvalue())
 
 ;; define functions
@@ -41,3 +41,11 @@ for frontend_writer in frontend_writers:
   for svg in svgs:
     frontend_writer.send(msg_svg_output(svg))
     await frontend_writer.drain()
+
+;; use ntpy matplotlib backend
+params = {"ytick.color" : "w",
+          "xtick.color" : "w",
+          "axes.titlecolor" : "w",
+          "axes.labelcolor" : "w",
+          "axes.edgecolor" : "w"}
+plt.rcParams.update(params)
