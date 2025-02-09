@@ -337,9 +337,9 @@ def msg_log(text):
   msg["data"] = { "text": text }
   return json.dumps(msg)
 
-def log_debug(text):
+def log_debug(*text):
   for frontend_writer in frontend_writers:
-    frontend_writer.send(msg_log(text)) 
+    frontend_writer.send(msg_log(" ".join(text))) 
 def msg_svg_output(svg_content):
   global task_id
 
@@ -380,7 +380,7 @@ def msg_notify_idle():
   loop_status_sent = False
   return json.dumps(msg)
 
-def tangle_rec(name, sections, tangled, parent_section, blacklist):
+def tangle_rec(name, sections, tangled, parent_section, blacklist, prefix):
 	if name in blacklist:
 		return []
 
@@ -392,9 +392,10 @@ def tangle_rec(name, sections, tangled, parent_section, blacklist):
 		return tangled[name]
 	lines = []
 	for line in sections[name]:
-		log_debug(f"LINE {line}")
 		if re.match("^\\s*;[^;].*", line):
-			ref_name = re.match("^\\s*;([^;].*)", line)[1].strip()
+			match = re.match("^(\\s*);([^;].*)", line)
+			new_prefix = match[1]
+			ref_name = match[2].strip()
 			if ref_name not in parent_section:
 				parent_section[ref_name] = []
 
@@ -402,13 +403,13 @@ def tangle_rec(name, sections, tangled, parent_section, blacklist):
 				parent_section[ref_name].append(name)
 
 
-			ref_lines = tangle_rec(ref_name, sections, tangled, parent_section, blacklist)
+			ref_lines = tangle_rec(ref_name, sections, tangled, parent_section, blacklist, prefix+new_prefix)
 			for ref_line in ref_lines:
-				lines.append(ref_line)
+				lines.append(prefix + new_prefix + ref_line)
 
 
 		else:
-			lines.append(line)
+			lines.append(prefix + line)
 
 	tangled[name] = lines
 	blacklist.pop()
@@ -454,7 +455,6 @@ async def on_connect(reader, writer):
 		assert("cmd" in msg)
 
 		if msg["cmd"] == "execute":
-			log_debug(str(msg))
 			assert("data" in msg)
 			data = msg["data"]
 			assert("name" in data)
@@ -467,12 +467,10 @@ async def on_connect(reader, writer):
 			tangled = {}
 			parent_section = {}
 
+
 			blacklist = []
 			for section_name in sections.keys():
-				log_debug(f"TANGLE {section_name}")
-				tangle_rec(section_name, sections, tangled, parent_section, blacklist)
-				for line in tangled[section_name]:
-					log_debug(f"{line}")
+				tangle_rec(section_name, sections, tangled, parent_section, blacklist, "")
 
 			if name != "loop" and data["execute"]:
 				pending_sections.append(name)

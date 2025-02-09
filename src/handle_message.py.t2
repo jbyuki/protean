@@ -1,7 +1,6 @@
 ;;; ntpy-server
 ;;- handle message
 if msg["cmd"] == "execute":
-	log_debug(str(msg))
 	; check message format for execute
 	; add or replace section to database
 	; retangle all sections
@@ -32,7 +31,7 @@ tangled = {}
 global tangled
 
 ;; define functions
-def tangle_rec(name, sections, tangled, parent_section, blacklist):
+def tangle_rec(name, sections, tangled, parent_section, blacklist, prefix):
 	; return if name in blacklist
 	; add name to blacklist
 	if name not in sections:
@@ -41,7 +40,6 @@ def tangle_rec(name, sections, tangled, parent_section, blacklist):
 		return tangled[name]
 	lines = []
 	for line in sections[name]:
-		log_debug(f"LINE {line}")
 		; if line is literate reference recurse
 		; otherwise just add line to list
 	tangled[name] = lines
@@ -51,12 +49,10 @@ def tangle_rec(name, sections, tangled, parent_section, blacklist):
 ;; retangle all sections
 tangled = {}
 ; clear retangling all
+
 blacklist = []
 for section_name in sections.keys():
-	log_debug(f"TANGLE {section_name}")
-	tangle_rec(section_name, sections, tangled, parent_section, blacklist)
-	for line in tangled[section_name]:
-		log_debug(f"{line}")
+	tangle_rec(section_name, sections, tangled, parent_section, blacklist, "")
 
 ;; if line is literate reference recurse
 if re.match("^\\s*;[^;].*", line):
@@ -65,13 +61,15 @@ if re.match("^\\s*;[^;].*", line):
 
 ;; otherwise just add line to list
 else:
-	lines.append(line)
+	lines.append(prefix + line)
 
 ;; imports
 import re
 
 ;; extract reference name
-ref_name = re.match("^\\s*;([^;].*)", line)[1].strip()
+match = re.match("^(\\s*);([^;].*)", line)
+new_prefix = match[1]
+ref_name = match[2].strip()
 ; add parent to reference
 
 ;; add name to blacklist
@@ -85,9 +83,9 @@ if name in blacklist:
 	return []
 
 ;; recurse and add lines from reference
-ref_lines = tangle_rec(ref_name, sections, tangled, parent_section, blacklist)
+ref_lines = tangle_rec(ref_name, sections, tangled, parent_section, blacklist, prefix+new_prefix)
 for ref_line in ref_lines:
-	lines.append(ref_line)
+	lines.append(prefix + new_prefix + ref_line)
 
 ;; client variables
 parent_section = {}

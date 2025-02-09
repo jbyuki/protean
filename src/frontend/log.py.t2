@@ -7,6 +7,6 @@ def msg_log(text):
   return json.dumps(msg)
 
 ;; define functions
-def log_debug(text):
+def log_debug(*text):
   for frontend_writer in frontend_writers:
-    frontend_writer.send(msg_log(text)) 
+    frontend_writer.send(msg_log(" ".join(text))) 
