@@ -404,12 +404,15 @@ def tangle_rec(name, sections, tangled, parent_section, blacklist, prefix):
 
 
 			ref_lines = tangle_rec(ref_name, sections, tangled, parent_section, blacklist, prefix+new_prefix)
-			for ref_line in ref_lines:
-				lines.append(prefix + new_prefix + ref_line)
+			if len(ref_lines) > 0:
+				for ref_line in ref_lines:
+					lines.append(prefix + new_prefix + ref_line)
+			else:
+				lines.append(prefix + new_prefix + "pass")
 
 
 		else:
-			lines.append(prefix + line)
+			lines.append(line)
 
 	tangled[name] = lines
 	blacklist.pop()
@@ -472,8 +475,25 @@ async def on_connect(reader, writer):
 			for section_name in sections.keys():
 				tangle_rec(section_name, sections, tangled, parent_section, blacklist, "")
 
-			if name != "loop" and data["execute"]:
-				pending_sections.append(name)
+			if data["execute"]:
+				has_loop_parent = False
+				open = [name]
+				closed = set()
+				closed.add(name)
+				while len(open) > 0:
+					current = open.pop()
+					if current == "loop":
+						has_loop_parent = True
+						break
+					
+					if current in parent_section:
+						for parent in parent_section[current]:
+							if parent not in closed:
+								open.append(parent)
+								closed.add(current)
+				if not has_loop_parent:
+					pending_sections.append(name)
+
 			global task_id
 			task_id = task_id + 1
 

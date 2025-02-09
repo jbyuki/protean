@@ -61,7 +61,7 @@ if re.match("^\\s*;[^;].*", line):
 
 ;; otherwise just add line to list
 else:
-	lines.append(prefix + line)
+	lines.append(line)
 
 ;; imports
 import re
@@ -84,8 +84,11 @@ if name in blacklist:
 
 ;; recurse and add lines from reference
 ref_lines = tangle_rec(ref_name, sections, tangled, parent_section, blacklist, prefix+new_prefix)
-for ref_line in ref_lines:
-	lines.append(prefix + new_prefix + ref_line)
+if len(ref_lines) > 0:
+	for ref_line in ref_lines:
+		lines.append(prefix + new_prefix + ref_line)
+else:
+	lines.append(prefix + new_prefix + "pass")
 
 ;; client variables
 parent_section = {}
@@ -107,5 +110,24 @@ pending_sections = []
 global pending_sections
 
 ;; add or replace parent section to running sections
-if name != "loop" and data["execute"]:
-	pending_sections.append(name)
+if data["execute"]:
+	has_loop_parent = False
+	; check if any parent is loop
+	if not has_loop_parent:
+		pending_sections.append(name)
+
+;; check if any parent is loop
+open = [name]
+closed = set()
+closed.add(name)
+while len(open) > 0:
+	current = open.pop()
+	if current == "loop":
+		has_loop_parent = True
+		break
+	
+	if current in parent_section:
+		for parent in parent_section[current]:
+			if parent not in closed:
+				open.append(parent)
+				closed.add(current)

@@ -209,6 +209,7 @@ window.onload = () =>
 
           const kernel_status = document.getElementById("kernel-status").firstElementChild;
           kernel_status.textContent = "";
+          kernel_status.style.color = "#888";
 
           status_animation = setInterval((kernel_status, section_name) => {
             const curLength = kernel_status.textContent.length;
@@ -243,6 +244,7 @@ window.onload = () =>
             {
               const kernel_status = document.getElementById("kernel-status").firstElementChild;
               kernel_status.textContent = "idle";
+              kernel_status.style.color = "#444";
               clearInterval(idle_request);
               idle_request = null;
             }
