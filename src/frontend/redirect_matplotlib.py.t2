@@ -18,11 +18,13 @@ if len(new_figs) > 0:
 
 ;; imports
 import io
+import matplotlib.pyplot as plt
 
 ;; generate svgs foreach figure
 svgs = []
 for fig in new_figs:
   f = io.StringIO()
+  plt.tight_layout()
   fig.print_svg(f)
   svgs.append(f.getvalue())
 

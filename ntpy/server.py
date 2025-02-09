@@ -10,6 +10,7 @@ import matplotlib
 from ntpy_matplotlib_backend import flush_figures
 
 import io
+import matplotlib.pyplot as plt
 
 import sys
 from io import StringIO
@@ -75,6 +76,7 @@ async def start_executor():
           svgs = []
           for fig in new_figs:
             f = io.StringIO()
+            plt.tight_layout()
             fig.print_svg(f)
             svgs.append(f.getvalue())
 
