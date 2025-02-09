@@ -160,9 +160,10 @@ else if(msg.data.status == "idle")
 }
 
 ;; trim if section name is too long
-if(section_name.length > 16)
+const max_section_name_length = 32;
+if(section_name.length > max_section_name_length )
 {
-  section_name = section_name.substr(0,16) + "...";
+  section_name = section_name.substr(0,max_section_name_length) + "...";
 }
 
 ;; variables
