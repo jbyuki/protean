@@ -1,6 +1,7 @@
 ;;; ntpy-server
 ;;- handle message
 if msg["cmd"] == "execute":
+	log_debug(str(msg))
 	; check message format for execute
 	; add or replace section to database
 	; retangle all sections
@@ -37,6 +38,7 @@ def tangle_rec(name, sections, tangled, parent_section, blacklist):
 		return tangled[name]
 	lines = []
 	for line in sections[name]:
+		log_debug(f"LINE {line}")
 		; if line is literate reference recurse
 		; otherwise just add line to list
 	tangled[name] = lines
@@ -48,8 +50,10 @@ tangled = {}
 ; clear retangling all
 blacklist = []
 for section_name in sections.keys():
-	log_debug(section_name)
+	log_debug(f"TANGLE {section_name}")
 	tangle_rec(section_name, sections, tangled, parent_section, blacklist)
+	for line in tangled[section_name]:
+		log_debug(f"{line}")
 
 ;; if line is literate reference recurse
 if re.match("^\\s*;[^;].*", line):
@@ -102,5 +106,5 @@ pending_sections = []
 global pending_sections
 
 ;; add or replace parent section to running sections
-if name != "loop":
+if name != "loop" and data["execute"]:
 	pending_sections.append(name)

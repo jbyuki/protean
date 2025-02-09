@@ -388,6 +388,7 @@ def tangle_rec(name, sections, tangled, parent_section, blacklist):
 		return tangled[name]
 	lines = []
 	for line in sections[name]:
+		log_debug(f"LINE {line}")
 		if re.match("^\\s*;[^;].*", line):
 			ref_name = re.match("^\\s*;([^;].*)", line)[1].strip()
 			if ref_name not in parent_section:
@@ -449,6 +450,7 @@ async def on_connect(reader, writer):
 		assert("cmd" in msg)
 
 		if msg["cmd"] == "execute":
+			log_debug(str(msg))
 			assert("data" in msg)
 			data = msg["data"]
 			assert("name" in data)
@@ -463,10 +465,12 @@ async def on_connect(reader, writer):
 
 			blacklist = []
 			for section_name in sections.keys():
-				log_debug(section_name)
+				log_debug(f"TANGLE {section_name}")
 				tangle_rec(section_name, sections, tangled, parent_section, blacklist)
+				for line in tangled[section_name]:
+					log_debug(f"{line}")
 
-			if name != "loop":
+			if name != "loop" and data["execute"]:
 				pending_sections.append(name)
 			global task_id
 			task_id = task_id + 1

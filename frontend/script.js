@@ -54,7 +54,6 @@ window.onload = () =>
   };
 
   socket.onmessage = (event) => {
-    console.log(event);
     if(typeof event.data == "string")
     {
       const msg = JSON.parse(event.data);

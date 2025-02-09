@@ -24,7 +24,6 @@ socket.onclose = (event) => {
 };
 
 socket.onmessage = (event) => {
-  console.log(event);
   ; if message is text
   ; if message is binary
 };
