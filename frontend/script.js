@@ -256,7 +256,7 @@ window.onload = () =>
 
       else if(msg.cmd == "log")
       {
-        console.log(msg.data.text);
+        console.log("SERVER: " + msg.data.text);
       }
     }
 
