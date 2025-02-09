@@ -9,4 +9,4 @@ def msg_log(text):
 ;; define functions
 def log_debug(*text):
   for frontend_writer in frontend_writers:
-    frontend_writer.send(msg_log(" ".join(text))) 
+    frontend_writer.send(msg_log(" ".join([str(t) for t in text]))) 

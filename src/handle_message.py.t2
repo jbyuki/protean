@@ -42,6 +42,7 @@ def tangle_rec(name, sections, tangled, parent_section, blacklist, prefix):
 	for line in sections[name]:
 		; if line is literate reference recurse
 		; otherwise just add line to list
+	log_debug(name, lines)
 	tangled[name] = lines
 	; pop blacklist
 	return lines
@@ -50,8 +51,8 @@ def tangle_rec(name, sections, tangled, parent_section, blacklist, prefix):
 tangled = {}
 ; clear retangling all
 
-blacklist = []
 for section_name in sections.keys():
+	blacklist = []
 	tangle_rec(section_name, sections, tangled, parent_section, blacklist, "")
 
 ;; if line is literate reference recurse

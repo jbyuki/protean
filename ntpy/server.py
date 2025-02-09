@@ -339,7 +339,7 @@ def msg_log(text):
 
 def log_debug(*text):
   for frontend_writer in frontend_writers:
-    frontend_writer.send(msg_log(" ".join(text))) 
+    frontend_writer.send(msg_log(" ".join([str(t) for t in text]))) 
 def msg_svg_output(svg_content):
   global task_id
 
@@ -414,6 +414,7 @@ def tangle_rec(name, sections, tangled, parent_section, blacklist, prefix):
 		else:
 			lines.append(line)
 
+	log_debug(name, lines)
 	tangled[name] = lines
 	blacklist.pop()
 
@@ -471,8 +472,8 @@ async def on_connect(reader, writer):
 			parent_section = {}
 
 
-			blacklist = []
 			for section_name in sections.keys():
+				blacklist = []
 				tangle_rec(section_name, sections, tangled, parent_section, blacklist, "")
 
 			if data["execute"]:
