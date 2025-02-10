@@ -15,6 +15,8 @@ class PrintStream:
     pass
   def write(self, s):
     ; broadcast to all frontends
+  def flush(self):
+    pass
 
 ;; define functions
 def msg_output_txt(txt):
@@ -25,6 +27,7 @@ def msg_output_txt(txt):
   return json.dumps(msg)
 
 ;; broadcast to all frontends
+; convert ansi codes to html
 global frontend_writers
 for frontend_writer in frontend_writers:
   frontend_writer.send(msg_output_txt(s)) 
@@ -41,3 +44,8 @@ task_id = task_id + 1
 
 ;; variables
 import time
+from ansi2html import Ansi2HTMLConverter
+
+;; convert ansi codes to html
+conv = Ansi2HTMLConverter()
+s = conv.convert(s, full=False)

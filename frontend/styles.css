@@ -1,8 +1,3 @@
-h1
-{
-  color: red;
-}
-
 #menu
 {
   position: sticky;
@@ -128,6 +123,7 @@ body
 {
   padding-left: 15px;
   flex-grow: 1;
+  white-space: pre-wrap;
 }
 
 #output > .cell > .cell-download
@@ -154,4 +150,5 @@ body
 {
   padding-left: 15px;
   color: #b66;
+  white-space: pre-wrap;
 }

@@ -67,7 +67,7 @@ window.onload = () =>
 
         if(task_id === previous_task_id)
         {
-          previous_cell.innerText += msg.data.text;
+          previous_cell.innerHTML += msg.data.text;
         }
 
         else
@@ -89,7 +89,7 @@ window.onload = () =>
           cell_output.classList.add("cell-output");
           cell.appendChild(cell_output);
 
-          cell_output.innerText = msg.data.text;
+          cell_output.innerHTML = msg.data.text;
 
           previous_task_id = task_id;
           previous_cell = cell_output;
@@ -127,7 +127,7 @@ window.onload = () =>
           code += `${i+1}  ${msg.data.lines[i]}\n`;
         }
 
-        cell_output.innerText = code + '\n' + msg.data.text;
+        cell_output.innerHTML = code + '\n' + msg.data.text;
 
         output.appendChild(cell);
 

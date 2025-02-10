@@ -92,7 +92,7 @@ var previous_cell;
 ;; if task id is same as previous append to existing
 if(task_id === previous_task_id)
 {
-  previous_cell.innerText += msg.data.text;
+  previous_cell.innerHTML += msg.data.text;
 }
 
 ;; otherwise create new and append
@@ -131,7 +131,7 @@ previous_task_id = task_id;
 previous_cell = cell_output;
 
 ;; set text content with message
-cell_output.innerText = msg.data.text;
+cell_output.innerHTML = msg.data.text;
 
 ;; append cell to output
 output.appendChild(cell);
@@ -301,7 +301,7 @@ for(let i=0; i<msg.data.lines.length; i++)
   code += `${i+1}  ${msg.data.lines[i]}\n`;
 }
 
-cell_output.innerText = code + '\n' + msg.data.text;
+cell_output.innerHTML = code + '\n' + msg.data.text;
 
 ;; if message is svg output
 else if(msg.cmd == "svg_output")

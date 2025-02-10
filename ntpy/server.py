@@ -34,16 +34,22 @@ class PrintStream:
   def __init__(self):
     pass
   def write(self, s):
+    conv = Ansi2HTMLConverter()
+    s = conv.convert(s, full=False)
     global frontend_writers
     for frontend_writer in frontend_writers:
       frontend_writer.send(msg_output_txt(s)) 
 
+  def flush(self):
+    pass
 
 frontend_writers = []
 
 task_id = 0
 
 import time
+from ansi2html import Ansi2HTMLConverter
+
 sent_sections = False
 
 loop_last_run = False
