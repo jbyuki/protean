@@ -7,7 +7,11 @@ def msg_exception(txt, lines):
   msg["data"] = { "task_id": task_id, "text": txt, "lines": lines }
   return json.dumps(msg)
 
+;; imports
+import traceback
+
 ;; send exception to frontend
+exc_msg = traceback.format_exc()
 for frontend_writer in frontend_writers:
-  frontend_writer.send(msg_exception(str(e), tangled[name]))
+  frontend_writer.send(msg_exception(exc_msg, tangled[name]))
   await frontend_writer.drain()

@@ -15,6 +15,8 @@ import matplotlib.pyplot as plt
 import sys
 from io import StringIO
 
+import traceback
+
 import re
 
 import asyncio
@@ -97,8 +99,9 @@ async def start_executor():
         sys.stdout = sys.__stdout__
 
         print(f"Exception {e}")
+        exc_msg = traceback.format_exc()
         for frontend_writer in frontend_writers:
-          frontend_writer.send(msg_exception(str(e), tangled[name]))
+          frontend_writer.send(msg_exception(exc_msg, tangled[name]))
           await frontend_writer.drain()
         new_figs = flush_figures()
 
@@ -132,8 +135,9 @@ async def start_executor():
         sys.stdout = sys.__stdout__
 
         print(f"Exception {e}")
+        exc_msg = traceback.format_exc()
         for frontend_writer in frontend_writers:
-          frontend_writer.send(msg_exception(str(e), tangled[name]))
+          frontend_writer.send(msg_exception(exc_msg, tangled[name]))
           await frontend_writer.drain()
         del tangled["loop"]
         global sections
