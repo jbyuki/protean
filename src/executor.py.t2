@@ -31,7 +31,7 @@ else:
 ;; execute code for section
 try:
   ; redirect to custom stdout
-  exec(code)
+  exec(code,  globals())
   ; restore to default stdout
   ; flush matplotlib figures
   ; if any pending figure send it
@@ -48,7 +48,7 @@ if "loop" in tangled:
   try:
     ; notify frontend that loop is running
     ; redirect to custom stdout
-    exec(code)
+    exec(code,  globals())
     ; restore to default stdout
     ; flush matplotlib figures
   except Exception as e:

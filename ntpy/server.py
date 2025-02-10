@@ -74,7 +74,7 @@ async def start_executor():
       try:
         sys.stdout = PrintStream()
 
-        exec(code)
+        exec(code,  globals())
         sys.stdout = sys.__stdout__
 
         new_figs = flush_figures()
@@ -123,7 +123,7 @@ async def start_executor():
 
         sys.stdout = PrintStream()
 
-        exec(code)
+        exec(code,  globals())
         sys.stdout = sys.__stdout__
 
         new_figs = flush_figures()
