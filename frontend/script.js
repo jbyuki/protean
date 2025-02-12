@@ -100,6 +100,7 @@ window.onload = () =>
 
         window.scrollTo(0, document.body.scrollHeight);
 
+
       }
 
       else if(msg.cmd == "exception")
@@ -132,6 +133,7 @@ window.onload = () =>
         output.appendChild(cell);
 
         window.scrollTo(0, document.body.scrollHeight);
+
 
       }
 
@@ -184,6 +186,7 @@ window.onload = () =>
         output.appendChild(cell);
 
         window.scrollTo(0, document.body.scrollHeight);
+
 
       }
 
@@ -282,12 +285,23 @@ window.onload = () =>
           kernel_status.style.color = "#444";
         }
 
+        else if(msg.data.status == "no exception")
+        {
+          var exception_cells = document.querySelectorAll(".cell-exception");
+          for(var i=0; i<exception_cells.length; i++)
+          {
+            const div_exception = exception_cells[i].parentElement;
+            div_exception.remove();
+          }
+        }
+
       }
 
       else if(msg.cmd == "log")
       {
         console.log("SERVER: " + msg.data.text);
       }
+
     }
 
   };

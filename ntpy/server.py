@@ -101,6 +101,8 @@ async def start_executor():
               await frontend_writer.drain()
 
 
+        for frontend_writer in frontend_writers:
+          frontend_writer.send(msg_notify_no_exception()) 
       except Exception as e:
         sys.stdout = sys.__stdout__
 
@@ -152,6 +154,7 @@ async def start_executor():
           for frontend_writer in frontend_writers:
             frontend_writer.send(msg_notify_loop_stop()) 
           loop_last_run = False
+
         new_figs = flush_figures()
 
 
@@ -407,6 +410,12 @@ def msg_notify_loop_stop():
   loop_last_run = False
   return json.dumps(msg)
 
+def msg_notify_no_exception():
+  msg = {}
+  msg["cmd"] = "notify"
+  msg["data"] = { "status": "no exception" }
+  return json.dumps(msg)
+
 def tangle_rec(name, sections, tangled, parent_section, blacklist, prefix):
 	if name in blacklist:
 		return []
@@ -541,6 +550,7 @@ async def on_connect(reader, writer):
 		    for frontend_writer in frontend_writers:
 		      frontend_writer.send(msg_notify_loop_stop()) 
 		    loop_last_run = False
+
 		else:
 			status = f"Unknown command {msg['cmd']}"
 

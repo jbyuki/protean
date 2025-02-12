@@ -78,3 +78,14 @@ if loop_last_run:
   for frontend_writer in frontend_writers:
     frontend_writer.send(msg_notify_loop_stop()) 
   loop_last_run = False
+
+;; define functions
+def msg_notify_no_exception():
+  msg = {}
+  msg["cmd"] = "notify"
+  msg["data"] = { "status": "no exception" }
+  return json.dumps(msg)
+
+;; send notify that code executed without issues
+for frontend_writer in frontend_writers:
+  frontend_writer.send(msg_notify_no_exception()) 

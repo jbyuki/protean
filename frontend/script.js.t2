@@ -139,6 +139,7 @@ output.appendChild(cell);
 ;; scroll to bottom
 window.scrollTo(0, document.body.scrollHeight);
 
+
 ;; if message is notify
 else if(msg.cmd == "notify")
 {
@@ -146,6 +147,7 @@ else if(msg.cmd == "notify")
   ; if message notify is idle
   ; if message notify is loop run
   ; if message notify is loop stop
+  ; if message notify is no exception
 }
 
 ;; if message notify is running
@@ -351,4 +353,18 @@ URL.revokeObjectURL(url);
 else if(msg.cmd == "log")
 {
   console.log("SERVER: " + msg.data.text);
+}
+
+;; if message notify is no exception
+else if(msg.data.status == "no exception")
+{
+  ; delete all exception cells
+}
+
+;; delete all exception cells
+var exception_cells = document.querySelectorAll(".cell-exception");
+for(var i=0; i<exception_cells.length; i++)
+{
+  const div_exception = exception_cells[i].parentElement;
+  div_exception.remove();
 }

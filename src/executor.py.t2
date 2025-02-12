@@ -35,6 +35,7 @@ try:
   ; restore to default stdout
   ; flush matplotlib figures
   ; if any pending figure send it
+  ; send notify that code executed without issues
 except Exception as e:
   ; restore to default stdout
   print(f"Exception {e}")
