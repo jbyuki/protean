@@ -22,6 +22,8 @@ import re
 import asyncio
 import json
 
+from sympy import latex
+
 class FrontendWriter:
   def __init__(self, writer):
     self.writer = writer
@@ -566,6 +568,19 @@ async def on_connect(reader, writer):
 	writer.close()
 	await writer.wait_closed()
 
+def msg_latex_output(latex_code):
+  global task_id
+
+  msg = {}
+  msg["cmd"] = "latex_output"
+  msg["data"] = { "task_id": task_id, "content": latex_code }
+  return json.dumps(msg)
+
+def disp(exp):
+  latex_code = latex(exp)
+  global frontend_writers
+  for frontend_writer in frontend_writers:
+    frontend_writer.send(msg_latex_output(latex_code))
 
 if __name__ == "__main__":
 	async def main():

@@ -13,7 +13,7 @@ Status:
 - [x] browser frontend
 - [x] error display in frontend
 - [x] redirect stdout to frontend
-- [ ] display latex in frontend
+- [x] display latex in frontend
 - [x] redirect plots to frontend
 
 Motivation

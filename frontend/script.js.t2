@@ -66,6 +66,7 @@ if(typeof event.data == "string")
   ; if message is output
   ; if message is exception
   ; if message is svg output
+  ; if message is latex output
   ; if message is notify
   ; if message is log
 }
@@ -349,6 +350,7 @@ a.download = `figure_${new Date().toJSON()}.svg`;
 a.click();
 URL.revokeObjectURL(url);
 
+
 ;; if message is log
 else if(msg.cmd == "log")
 {
@@ -368,3 +370,26 @@ for(var i=0; i<exception_cells.length; i++)
   const div_exception = exception_cells[i].parentElement;
   div_exception.remove();
 }
+
+;; if message is latex output
+else if(msg.cmd == "latex_output")
+{
+  ; get output element
+  ; get current date
+  ; create cell in output element
+  ; set latex content
+  ; append cell to output
+  ; call mathjax
+  ; scroll to bottom
+}
+
+;; set latex content
+var latex_content = msg.data.content;
+
+;; set latex content
+cell_output.innerHTML = "$$" + latex_content + "$$";
+
+;; call mathjax
+MathJax.texReset();
+MathJax.typesetClear();
+MathJax.typeset();

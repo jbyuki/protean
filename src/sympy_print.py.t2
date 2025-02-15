@@ -1,0 +1,18 @@
+;;; ntpy-server
+;; imports
+from sympy import latex
+
+;; define functions
+def msg_latex_output(latex_code):
+  ; get task id
+  msg = {}
+  msg["cmd"] = "latex_output"
+  msg["data"] = { "task_id": task_id, "content": latex_code }
+  return json.dumps(msg)
+
+;; define functions
+def disp(exp):
+  latex_code = latex(exp)
+  global frontend_writers
+  for frontend_writer in frontend_writers:
+    frontend_writer.send(msg_latex_output(latex_code))

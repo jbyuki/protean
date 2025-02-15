@@ -173,6 +173,7 @@ window.onload = () =>
           a.click();
           URL.revokeObjectURL(url);
 
+
         };
 
         cell.appendChild(cell_download);
@@ -185,6 +186,39 @@ window.onload = () =>
 
         output.appendChild(cell);
 
+        window.scrollTo(0, document.body.scrollHeight);
+
+
+      }
+
+      else if(msg.cmd == "latex_output")
+      {
+        const output = document.getElementById("output");
+
+        const today = new Date();
+        const time_iso = today.toLocaleString();
+
+        const cell = document.createElement("div");
+        cell.classList.add("cell");
+
+        const cell_date = document.createElement("div");
+        cell_date.classList.add("cell-date");
+        cell_date.textContent = time_iso
+        cell.appendChild(cell_date);
+
+        const cell_output = document.createElement("div");
+        cell_output.classList.add("cell-output");
+        cell.appendChild(cell_output);
+
+        var latex_content = msg.data.content;
+
+        cell_output.innerHTML = "$$" + latex_content + "$$";
+
+        output.appendChild(cell);
+
+        MathJax.texReset();
+        MathJax.typesetClear();
+        MathJax.typeset();
         window.scrollTo(0, document.body.scrollHeight);
 
 
@@ -293,6 +327,7 @@ window.onload = () =>
             const div_exception = exception_cells[i].parentElement;
             div_exception.remove();
           }
+
         }
 
       }
