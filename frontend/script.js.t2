@@ -436,7 +436,7 @@ const formula = win.document.getElementById("formula");
 formula.innerHTML = "$$\\large{" + latex_content + "}$$";
 
 ;; regenerate latex in popup window
-win.MathJax.typeset([formula]);
+win.MathJax.typeset();
 
 ;; append enlarge huge button
 const cell_view_huge = document.createElement("div");

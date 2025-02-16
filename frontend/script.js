@@ -223,7 +223,7 @@ window.onload = () =>
             const formula = win.document.getElementById("formula");
             formula.innerHTML = "$$\\large{" + latex_content + "}$$";
 
-            win.MathJax.typeset([formula]);
+            win.MathJax.typeset();
 
           };
         };
@@ -242,7 +242,7 @@ window.onload = () =>
           win.onload = () => {
             const formula = win.document.getElementById("formula");
             formula.innerHTML = "$$\\huge{" + latex_content + "}$$";
-            win.MathJax.typeset([formula]);
+            win.MathJax.typeset();
 
           };
         };
