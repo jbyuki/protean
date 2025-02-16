@@ -557,6 +557,21 @@ async def on_connect(reader, writer):
 		      frontend_writer.send(msg_notify_loop_stop()) 
 		    loop_last_run = False
 
+		elif msg["cmd"] == "toggleBackend":
+		  backend_name = matplotlib.get_backend()
+		  if backend_name == "module://ntpy_matplotlib_backend":
+		    matplotlib.rcParams.update(matplotlib.rcParamsDefault)
+		    matplotlib.use("qtagg")
+		  else:
+		    matplotlib.use('module://ntpy_matplotlib_backend')
+
+		    params = {"ytick.color" : "w",
+		              "xtick.color" : "w",
+		              "axes.titlecolor" : "w",
+		              "axes.labelcolor" : "w",
+		              "axes.edgecolor" : "w"}
+		    plt.rcParams.update(params)
+		  log_debug(f"new backend {matplotlib.get_backend()}")
 		else:
 			status = f"Unknown command {msg['cmd']}"
 
