@@ -223,9 +223,7 @@ window.onload = () =>
             const formula = win.document.getElementById("formula");
             formula.innerHTML = "$$\\large{" + latex_content + "}$$";
 
-            win.MathJax.texReset();
-            win.MathJax.typesetClear();
-            win.MathJax.typeset();
+            win.MathJax.typeset([formula]);
 
           };
         };
@@ -244,9 +242,7 @@ window.onload = () =>
           win.onload = () => {
             const formula = win.document.getElementById("formula");
             formula.innerHTML = "$$\\huge{" + latex_content + "}$$";
-            win.MathJax.texReset();
-            win.MathJax.typesetClear();
-            win.MathJax.typeset();
+            win.MathJax.typeset([formula]);
 
           };
         };
@@ -272,9 +268,7 @@ window.onload = () =>
 
         output.appendChild(cell);
 
-        MathJax.texReset();
-        MathJax.typesetClear();
-        MathJax.typeset();
+        MathJax.typeset([cell_output]);
 
         window.scrollTo(0, document.body.scrollHeight);
 

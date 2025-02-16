@@ -393,9 +393,7 @@ var latex_content = msg.data.content;
 cell_output.innerHTML = "$$" + latex_content + "$$";
 
 ;; call mathjax
-MathJax.texReset();
-MathJax.typesetClear();
-MathJax.typeset();
+MathJax.typeset([cell_output]);
 
 ;; append copy latex button
 const cell_copy = document.createElement("div");
@@ -438,9 +436,7 @@ const formula = win.document.getElementById("formula");
 formula.innerHTML = "$$\\large{" + latex_content + "}$$";
 
 ;; regenerate latex in popup window
-win.MathJax.texReset();
-win.MathJax.typesetClear();
-win.MathJax.typeset();
+win.MathJax.typeset([formula]);
 
 ;; append enlarge huge button
 const cell_view_huge = document.createElement("div");
