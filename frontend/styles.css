@@ -138,6 +138,7 @@ body
 {
   margin: 0;
   padding: 0;
+  padding-right: 10px;
 }
 
 #output > .cell > .cell-download p:hover
