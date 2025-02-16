@@ -210,14 +210,36 @@ window.onload = () =>
         cell_output.classList.add("cell-output");
         cell.appendChild(cell_output);
 
+        const cell_view = document.createElement("div");
+        cell_view.classList.add("cell-download");
+
+        const p_view = document.createElement("p");
+        p_view.innerText = "View";
+        cell_view.appendChild(p_view);
+        p_view.onclick = () => {
+          const win = window.open("http://localhost:8090/popup_latex.html");
+
+          win.onload = () => {
+            const formula = win.document.getElementById("formula");
+            formula.innerHTML = "$$" + latex_content + "$$";
+
+            win.MathJax.texReset();
+            win.MathJax.typesetClear();
+            win.MathJax.typeset();
+          };
+        };
+
+        cell.appendChild(cell_view);
+
         const cell_copy = document.createElement("div");
         cell_copy.classList.add("cell-download");
 
-        const p = document.createElement("p");
-        p.innerText = "Copy";
-        cell_copy.appendChild(p);
-        p.onclick = () => {
+        const p_copy = document.createElement("p");
+        p_copy.innerText = "Copy";
+        cell_copy.appendChild(p_copy);
+        p_copy.onclick = () => {
           navigator.clipboard.writeText(msg.data.content);
+
         };
 
         cell.appendChild(cell_copy);

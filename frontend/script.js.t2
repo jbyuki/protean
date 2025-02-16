@@ -377,6 +377,7 @@ else if(msg.cmd == "latex_output")
   ; get output element
   ; get current date
   ; create cell in output element
+  ; append enlarge button
   ; append copy latex button
   ; set latex content
   ; append cell to output
@@ -399,14 +400,43 @@ MathJax.typeset();
 const cell_copy = document.createElement("div");
 cell_copy.classList.add("cell-download");
 
-const p = document.createElement("p");
-p.innerText = "Copy";
-cell_copy.appendChild(p);
-p.onclick = () => {
-  ; copy html to clipboard
+const p_copy = document.createElement("p");
+p_copy.innerText = "Copy";
+cell_copy.appendChild(p_copy);
+p_copy.onclick = () => {
+  ; copy latex to clipboard
 };
 
 cell.appendChild(cell_copy);
 
-;; copy html to clipboard
+;; copy latex to clipboard
 navigator.clipboard.writeText(msg.data.content);
+
+;; append enlarge button
+const cell_view = document.createElement("div");
+cell_view.classList.add("cell-download");
+
+const p_view = document.createElement("p");
+p_view.innerText = "View";
+cell_view.appendChild(p_view);
+p_view.onclick = () => {
+  ; create popup window
+  win.onload = () => {
+    ; put latex in popup window
+    ; regenerate latex in popup window
+  };
+};
+
+cell.appendChild(cell_view);
+
+;; create popup window
+const win = window.open("http://localhost:8090/popup_latex.html");
+
+;; put latex in popup window
+const formula = win.document.getElementById("formula");
+formula.innerHTML = "$$" + latex_content + "$$";
+
+;; regenerate latex in popup window
+win.MathJax.texReset();
+win.MathJax.typesetClear();
+win.MathJax.typeset();

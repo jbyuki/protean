@@ -254,7 +254,7 @@ async def on_frontend_connect(reader, writer):
 				route = rest[:space]
 				rest = rest[space+1:]
 
-				if route == b'/' or route == b'/script.js' or route == b'/styles.css':
+				if route == b'/' or route == b'/script.js' or route == b'/styles.css' or route == b'/popup_latex.html':
 					filename = route[1:].decode('utf-8')
 					if filename == "":
 						filename = "index.html"
@@ -269,6 +269,8 @@ async def on_frontend_connect(reader, writer):
 						content_type = 'text/javascript'
 					elif filename == 'styles.css':
 						content_type = 'text/css'
+					else:
+						content_type = f'text/{filename.split('.')[1]}'
 
 					msg_lines = [
 						"HTTP/1.1 200 OK",
@@ -312,6 +314,8 @@ async def on_frontend_connect(reader, writer):
 				  frontend_writers.append(frontend_writer_task)
 
 
+				else:
+					print(f"Unknown route {route.decode('utf-8')}")
 
 			else:
 				print(f"Unknown method {method}")

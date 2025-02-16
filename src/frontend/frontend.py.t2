@@ -59,6 +59,8 @@ rest = first_line[space+1:]
 if method == b'GET':
 	; decode get path
 	; do routing
+	else:
+		print(f"Unknown route {route.decode('utf-8')}")
 
 ;; decode get path
 space = rest.find(b' ')
@@ -80,7 +82,7 @@ async def write_http_message(writer, lines, body=None):
 from pathlib import Path
 
 ;;- do routing
-if route == b'/' or route == b'/script.js' or route == b'/styles.css':
+if route == b'/' or route == b'/script.js' or route == b'/styles.css' or route == b'/popup_latex.html':
 	filename = route[1:].decode('utf-8')
 	if filename == "":
 		filename = "index.html"
@@ -95,6 +97,8 @@ if route == b'/' or route == b'/script.js' or route == b'/styles.css':
 		content_type = 'text/javascript'
 	elif filename == 'styles.css':
 		content_type = 'text/css'
+	else:
+		content_type = f'text/{filename.split('.')[1]}'
 
 	msg_lines = [
 		"HTTP/1.1 200 OK",
