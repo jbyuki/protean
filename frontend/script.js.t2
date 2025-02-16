@@ -377,6 +377,7 @@ else if(msg.cmd == "latex_output")
   ; get output element
   ; get current date
   ; create cell in output element
+  ; append copy latex button
   ; set latex content
   ; append cell to output
   ; call mathjax
@@ -393,3 +394,19 @@ cell_output.innerHTML = "$$" + latex_content + "$$";
 MathJax.texReset();
 MathJax.typesetClear();
 MathJax.typeset();
+
+;; append copy latex button
+const cell_copy = document.createElement("div");
+cell_copy.classList.add("cell-download");
+
+const p = document.createElement("p");
+p.innerText = "Copy";
+cell_copy.appendChild(p);
+p.onclick = () => {
+  ; copy html to clipboard
+};
+
+cell.appendChild(cell_copy);
+
+;; copy html to clipboard
+navigator.clipboard.writeText(msg.data.content);

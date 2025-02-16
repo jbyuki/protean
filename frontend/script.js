@@ -210,6 +210,18 @@ window.onload = () =>
         cell_output.classList.add("cell-output");
         cell.appendChild(cell_output);
 
+        const cell_copy = document.createElement("div");
+        cell_copy.classList.add("cell-download");
+
+        const p = document.createElement("p");
+        p.innerText = "Copy";
+        cell_copy.appendChild(p);
+        p.onclick = () => {
+          navigator.clipboard.writeText(msg.data.content);
+        };
+
+        cell.appendChild(cell_copy);
+
         var latex_content = msg.data.content;
 
         cell_output.innerHTML = "$$" + latex_content + "$$";
@@ -219,6 +231,7 @@ window.onload = () =>
         MathJax.texReset();
         MathJax.typesetClear();
         MathJax.typeset();
+
         window.scrollTo(0, document.body.scrollHeight);
 
 

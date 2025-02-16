@@ -36,9 +36,9 @@ class PrintStream:
   def __init__(self):
     pass
   def write(self, s):
+    global frontend_writers
     conv = Ansi2HTMLConverter()
     s = conv.convert(s, full=False)
-    global frontend_writers
     for frontend_writer in frontend_writers:
       frontend_writer.send(msg_output_txt(s)) 
 
