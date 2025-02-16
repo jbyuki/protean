@@ -2,6 +2,18 @@
 
 `ntpy` is a server which runs literate python designed for the experimentation of realtime applications.  
 
+### Browser front-end
+
+![image](https://github.com/user-attachments/assets/7df09d03-6baf-46c6-901a-87f90397c1f8)
+
+Printing and plotting from the server can be visualized in a browser front-end. It supports mathplotlib figures, LaTeX rendering.
+
+### Interactive computing with realtime applications
+
+https://github.com/user-attachments/assets/00f6a6f0-fc03-4252-870e-129511e7baf9
+
+Realtime application typically having an infinite main loop can be modified while they are running.
+
 **work-in-progress**
 
 Status:
