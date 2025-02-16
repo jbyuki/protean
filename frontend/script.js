@@ -214,22 +214,44 @@ window.onload = () =>
         cell_view.classList.add("cell-download");
 
         const p_view = document.createElement("p");
-        p_view.innerText = "View";
+        p_view.innerText = "Normal";
         cell_view.appendChild(p_view);
         p_view.onclick = () => {
           const win = window.open("http://localhost:8090/popup_latex.html");
 
           win.onload = () => {
             const formula = win.document.getElementById("formula");
-            formula.innerHTML = "$$" + latex_content + "$$";
+            formula.innerHTML = "$$\\large{" + latex_content + "}$$";
 
             win.MathJax.texReset();
             win.MathJax.typesetClear();
             win.MathJax.typeset();
+
           };
         };
 
         cell.appendChild(cell_view);
+
+        const cell_view_huge = document.createElement("div");
+        cell_view_huge.classList.add("cell-download");
+
+        const p_view_huge = document.createElement("p");
+        p_view_huge.innerText = "Large";
+        cell_view_huge.appendChild(p_view_huge);
+        p_view_huge.onclick = () => {
+          const win = window.open("http://localhost:8090/popup_latex.html");
+
+          win.onload = () => {
+            const formula = win.document.getElementById("formula");
+            formula.innerHTML = "$$\\huge{" + latex_content + "}$$";
+            win.MathJax.texReset();
+            win.MathJax.typesetClear();
+            win.MathJax.typeset();
+
+          };
+        };
+
+        cell.appendChild(cell_view_huge);
 
         const cell_copy = document.createElement("div");
         cell_copy.classList.add("cell-download");

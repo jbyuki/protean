@@ -377,7 +377,8 @@ else if(msg.cmd == "latex_output")
   ; get output element
   ; get current date
   ; create cell in output element
-  ; append enlarge button
+  ; append enlarge normal button
+  ; append enlarge huge button
   ; append copy latex button
   ; set latex content
   ; append cell to output
@@ -412,17 +413,17 @@ cell.appendChild(cell_copy);
 ;; copy latex to clipboard
 navigator.clipboard.writeText(msg.data.content);
 
-;; append enlarge button
+;; append enlarge normal button
 const cell_view = document.createElement("div");
 cell_view.classList.add("cell-download");
 
 const p_view = document.createElement("p");
-p_view.innerText = "View";
+p_view.innerText = "Normal";
 cell_view.appendChild(p_view);
 p_view.onclick = () => {
   ; create popup window
   win.onload = () => {
-    ; put latex in popup window
+    ; put latex normal in popup window
     ; regenerate latex in popup window
   };
 };
@@ -432,11 +433,32 @@ cell.appendChild(cell_view);
 ;; create popup window
 const win = window.open("http://localhost:8090/popup_latex.html");
 
-;; put latex in popup window
+;; put latex normal in popup window
 const formula = win.document.getElementById("formula");
-formula.innerHTML = "$$" + latex_content + "$$";
+formula.innerHTML = "$$\\large{" + latex_content + "}$$";
 
 ;; regenerate latex in popup window
 win.MathJax.texReset();
 win.MathJax.typesetClear();
 win.MathJax.typeset();
+
+;; append enlarge huge button
+const cell_view_huge = document.createElement("div");
+cell_view_huge.classList.add("cell-download");
+
+const p_view_huge = document.createElement("p");
+p_view_huge.innerText = "Large";
+cell_view_huge.appendChild(p_view_huge);
+p_view_huge.onclick = () => {
+  ; create popup window
+  win.onload = () => {
+    ; put latex huge in popup window
+    ; regenerate latex in popup window
+  };
+};
+
+cell.appendChild(cell_view_huge);
+
+;; put latex huge in popup window
+const formula = win.document.getElementById("formula");
+formula.innerHTML = "$$\\huge{" + latex_content + "}$$";
