@@ -270,7 +270,8 @@ async def on_frontend_connect(reader, writer):
 					elif filename == 'styles.css':
 						content_type = 'text/css'
 					else:
-						content_type = f'text/{filename.split('.')[1]}'
+						ext = filename.split('.')[1]
+						content_type = f'text/{ex}'
 
 					msg_lines = [
 						"HTTP/1.1 200 OK",
