@@ -271,7 +271,7 @@ async def on_frontend_connect(reader, writer):
 						content_type = 'text/css'
 					else:
 						ext = filename.split('.')[1]
-						content_type = f'text/{ex}'
+						content_type = f'text/{ext}'
 
 					msg_lines = [
 						"HTTP/1.1 200 OK",

@@ -99,7 +99,7 @@ if route == b'/' or route == b'/script.js' or route == b'/styles.css' or route =
 		content_type = 'text/css'
 	else:
 		ext = filename.split('.')[1]
-		content_type = f'text/{ex}'
+		content_type = f'text/{ext}'
 
 	msg_lines = [
 		"HTTP/1.1 200 OK",
