@@ -1,0 +1,76 @@
+;;; frontend_js
+;; functions
+function execute()
+{
+  ; execute pending sections
+  ; clear pending sections
+  ; execute loop iteration if enabled
+  ; if loop enabled call itself
+  ; otherwise go in sleep mode
+}
+
+;; execute pending sections
+for(const name of pending_sections)
+{
+  ; fetch code for name
+  ; execute code
+}
+
+
+;; fetch code for name
+const code = tangled[name].join('\n');
+
+;; execute code
+try
+{
+  eval(code);
+}
+catch(err)
+{
+  console.error(err);
+}
+
+;; clear pending sections
+pending_sections = [];
+
+;; execute loop iteration if enabled
+if(execute_loop && ("loop" in tangled))
+{
+  const name = "loop";
+  ; fetch code for name
+  ; execute code loop
+}
+
+;; execute code loop
+try
+{
+  eval(code);
+}
+catch(err)
+{
+  console.error(err);
+  execute_loop = false;
+}
+
+;; if loop enabled call itself
+if(execute_loop && ("loop" in tangled))
+{
+  setTimeout(execute, 0);
+}
+
+;; otherwise go in sleep mode
+else
+{
+  sleeping = true;
+}
+
+;; variables
+var sleeping = true;
+
+;; resume executor if sleeping
+if(sleeping)
+{
+  sleeping = false;
+  setTimeout(execute, 0);
+}
+

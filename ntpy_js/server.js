@@ -50,6 +50,7 @@ wss.on('connection', (ws) => {
   ws.on('message', (data) => {
   });
   ws.on('close', () => {
+    console.log('websocket client disconnected');
     const idx = ws_clients.indexOf(ws);
     if(idx != -1)
     {

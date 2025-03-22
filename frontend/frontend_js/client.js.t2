@@ -13,7 +13,6 @@ const socket = new WebSocket("ws://localhost:8091/ws");
 
 ;; set websocket callbacks
 socket.onopen = (event) => {
-  console.log('opened ws connection')
 };
 
 socket.onclose = (event) => {
@@ -25,4 +24,149 @@ socket.onerror = (event) => {
 };
 
 socket.onmessage = (event) => {
+  ; parse json message
+  ; if message is execute
+  ; if message is kill loop
 };
+
+;; parse json message
+const msg = JSON.parse(event.data);
+
+;; if message is execute
+if(msg['cmd'] == 'execute')
+{
+  const data = msg['data'];
+  const name = data['name'];
+  const lines = data['lines'];
+
+  ; replace or add new section
+  ; retangle all sections
+  if(data['execute'])
+  {
+    ; if parent is not loop add to pending sections
+    ; if packet is loop resume loop
+    ; resume executor if sleeping
+  }
+}
+
+;; variables
+var sections = {};
+
+;; replace or add new section
+sections[name] = lines
+
+;; variables
+var tangled = {};
+
+;; retangle all sections
+tangled = {};
+; clear parent list
+for(const name in sections)
+{
+  tangle(name);
+}
+
+;; functions
+function tangle(name, prefix="", blacklist=[])
+{
+  ; if name in blacklist skip
+  ; push name to blacklist
+  ; if already tangled return
+  ; if not in sections return
+  const lines = [];
+  for(const line of sections[name])
+  {
+    ; if line is reference recurse
+    ; otherwise just add the line
+  }
+  ; pop name to blacklist
+  tangled[name] = lines;
+}
+
+;; if name in blacklist skip
+if(blacklist.indexOf(name) != -1)
+{
+  return [];
+}
+
+;; push name to blacklist
+blacklist.push(name);
+
+;; pop name to blacklist
+blacklist.pop();
+
+;; if already tangled return
+if(name in tangled)
+{
+  return tangled[name];
+}
+
+;; if not in sections return
+if(!(name in sections))
+{
+  return [];
+}
+
+;; if line is reference recurse
+if(/\w*;[^;].*/.test(line))
+{
+  ; extract prefix reference name
+  ; get recursive lines and add them
+}
+
+;; extract prefix reference name
+const matches = line.match(/(\w*);([^;].*)/);
+const ref_prefix = matches[1];
+const ref_name = matches[2].trim();
+
+;; get recursive lines and add them
+; add to parent list
+const ref_lines = tangle(ref_name, prefix + ref_prefix, blacklist);
+for(const ref_line of ref_lines)
+{
+  lines.push(prefix + ref_prefix + ref_line);
+}
+
+;; otherwise just add the line
+else
+{
+  lines.push(prefix + line);
+}
+
+;; variables
+var parent = {};
+
+;; clear parent list
+parent = {};
+
+;; add to parent list
+parent[ref_name] = name;
+
+;; functions
+function get_root(name)
+{
+  if(!(name in parent))
+  {
+    return name;
+  }
+  return get_root(parent[name]);
+}
+
+;; variables
+var pending_sections = [];
+
+;; if parent is not loop add to pending sections
+const root = get_root(name);
+if(root != "loop")
+{
+  pending_sections.push(name);
+}
+
+;; variables
+var execute_loop = false;
+
+;; if packet is loop resume loop
+else
+{
+  execute_loop = true;
+}

@@ -1,9 +1,127 @@
+var sections = {};
+
+var tangled = {};
+
+var parent = {};
+
+var pending_sections = [];
+
+var execute_loop = false;
+
+var sleeping = true;
+
+function tangle(name, prefix="", blacklist=[])
+{
+  if(blacklist.indexOf(name) != -1)
+  {
+    return [];
+  }
+
+  blacklist.push(name);
+
+  if(name in tangled)
+  {
+    return tangled[name];
+  }
+
+  if(!(name in sections))
+  {
+    return [];
+  }
+
+  const lines = [];
+  for(const line of sections[name])
+  {
+    if(/\w*;[^;].*/.test(line))
+    {
+      const matches = line.match(/(\w*);([^;].*)/);
+      const ref_prefix = matches[1];
+      const ref_name = matches[2].trim();
+
+      parent[ref_name] = name;
+
+      const ref_lines = tangle(ref_name, prefix + ref_prefix, blacklist);
+      for(const ref_line of ref_lines)
+      {
+        lines.push(prefix + ref_prefix + ref_line);
+      }
+
+    }
+
+    else
+    {
+      lines.push(prefix + line);
+    }
+
+  }
+  blacklist.pop();
+
+  tangled[name] = lines;
+}
+
+function get_root(name)
+{
+  if(!(name in parent))
+  {
+    return name;
+  }
+  return get_root(parent[name]);
+}
+
+function execute()
+{
+  for(const name of pending_sections)
+  {
+    const code = tangled[name].join('\n');
+
+    try
+    {
+      eval(code);
+    }
+    catch(err)
+    {
+      console.error(err);
+    }
+
+  }
+
+
+  pending_sections = [];
+
+  if(execute_loop && ("loop" in tangled))
+  {
+    const name = "loop";
+    const code = tangled[name].join('\n');
+
+    try
+    {
+      eval(code);
+    }
+    catch(err)
+    {
+      console.error(err);
+      execute_loop = false;
+    }
+
+  }
+
+  if(execute_loop && ("loop" in tangled))
+  {
+    setTimeout(execute, 0);
+  }
+
+  else
+  {
+    sleeping = true;
+  }
+
+}
+
 window.onload = () =>
 {
   const socket = new WebSocket("ws://localhost:8091/ws");
 
   socket.onopen = (event) => {
-    console.log('opened ws connection')
   };
 
   socket.onclose = (event) => {
@@ -15,6 +133,50 @@ window.onload = () =>
   };
 
   socket.onmessage = (event) => {
+    const msg = JSON.parse(event.data);
+
+    if(msg['cmd'] == 'execute')
+    {
+      const data = msg['data'];
+      const name = data['name'];
+      const lines = data['lines'];
+
+      sections[name] = lines
+
+      tangled = {};
+      parent = {};
+
+      for(const name in sections)
+      {
+        tangle(name);
+      }
+
+      if(data['execute'])
+      {
+        const root = get_root(name);
+        if(root != "loop")
+        {
+          pending_sections.push(name);
+        }
+
+        else
+        {
+          execute_loop = true;
+        }
+        if(sleeping)
+        {
+          sleeping = false;
+          setTimeout(execute, 0);
+        }
+
+      }
+    }
+
+    else if(msg['cmd'] == 'killLoop')
+    {
+      execute_loop = false;
+    }
   };
+
 }
 

@@ -1,0 +1,6 @@
+;;; frontend_js
+;; if message is kill loop
+else if(msg['cmd'] == 'killLoop')
+{
+  execute_loop = false;
+}

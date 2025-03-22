@@ -1,11 +1,5 @@
 :: ./test.js
-; requires
-; variables
+; testing
 
-; create server
-; create client
-; send messages from client to server
-; end test
-
-;; requires
-console.log('hello world');
+;; testing
+console.log("hello world");

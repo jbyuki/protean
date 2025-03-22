@@ -68,6 +68,7 @@ wss.on('connection', (ws) => {
     ; handle ws message
   });
   ws.on('close', () => {
+    console.log('websocket client disconnected');
     ; remove ws client
   });
 });
