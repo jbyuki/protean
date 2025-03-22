@@ -16,8 +16,6 @@ Realtime application typically having an infinite main loop can be modified whil
 
 **work-in-progress**
 
-Status:
-
 - [x] Execute
 - [ ] Interrupt kernel
 - [ ] Restart kernel
@@ -27,6 +25,11 @@ Status:
 - [x] redirect stdout to frontend
 - [x] display latex in frontend
 - [x] redirect plots to frontend
+
+### Backends
+
+- python
+- javascript (wip)
 
 Motivation
 ----------
