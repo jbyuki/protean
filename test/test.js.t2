@@ -1,0 +1,11 @@
+:: ./test.js
+; requires
+; variables
+
+; create server
+; create client
+; send messages from client to server
+; end test
+
+;; requires
+console.log("hello world");

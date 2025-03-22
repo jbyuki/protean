@@ -1,0 +1,43 @@
+;;; ntpy_js
+:: ../../ntpy_js/server.js
+; requires
+; variables
+; functions
+
+; create server
+; listen server
+; start executor
+
+;; requires
+const net = require('node:net');
+
+;; create server
+const server = net.createServer((c) => {
+  console.log('client connected');
+  c.on('data', (data) => {
+    ; load json
+    const status = "Done";
+    ; handle message
+    ; send response back
+    ; notify that message has been received
+  });
+  c.on('end', () => {
+    console.log('client disconnected');
+  });
+});
+
+server.on('error', (err) => {
+  throw err;
+});
+
+;; listen server
+const port = 8089;
+server.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
+});
+
+;; load json
+const msg = JSON.parse(data.toString());
+
+;; send response back
+c.write(JSON.stringify({"status": status}) + "\n");
