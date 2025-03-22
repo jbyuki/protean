@@ -23,8 +23,17 @@ const server = net.createServer((c) => {
   });
   c.on('end', () => {
     console.log('client disconnected');
+    c.end();
   });
-});
+
+  c.on('error',function(err){
+    throw err;
+  });
+
+  c.on('close',function(error){
+    console.log('client closed');
+  });
+}, {  });
 
 server.on('error', (err) => {
   throw err;

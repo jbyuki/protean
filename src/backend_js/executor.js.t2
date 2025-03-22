@@ -5,7 +5,7 @@ var execute_scheduled = false;
 ;; functions
 function executor()
 {
-  execute_scheduled = true;
+  execute_scheduled = false;
 
   ; executor variables
   ; execute pending sections

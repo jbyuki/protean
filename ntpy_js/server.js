@@ -12,7 +12,7 @@ var pending_sections = [];
 
 function executor()
 {
-  execute_scheduled = true;
+  execute_scheduled = false;
 
   for(const name of pending_sections)
   {
@@ -193,8 +193,17 @@ const server = net.createServer((c) => {
   });
   c.on('end', () => {
     console.log('client disconnected');
+    c.end();
   });
-});
+
+  c.on('error',function(err){
+    throw err;
+  });
+
+  c.on('close',function(error){
+    console.log('client closed');
+  });
+}, {  });
 
 server.on('error', (err) => {
   throw err;
