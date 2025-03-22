@@ -1,0 +1,13 @@
+.theme
+{
+  background: #FFF;
+}
+
+@media(prefers-color-scheme: dark) 
+{
+  .theme.adaptive
+  {
+    background: #111;
+  }
+}
+

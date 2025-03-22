@@ -8,4 +8,4 @@
 ; end test
 
 ;; requires
-console.log("hi");
+console.log('hello world');

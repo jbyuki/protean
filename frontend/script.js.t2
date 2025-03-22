@@ -19,7 +19,7 @@ socket.onclose = (event) => {
   ; set status to disconnected
 };
 
-socket.onclose = (event) => {
+socket.onerror = (event) => {
   ; set status to error
 };
 

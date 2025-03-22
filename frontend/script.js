@@ -43,7 +43,7 @@ window.onload = () =>
 
   };
 
-  socket.onclose = (event) => {
+  socket.onerror = (event) => {
     const status = document.getElementById("connection-status");
     const p = status.firstElementChild;
     p.textContent = "error";

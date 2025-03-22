@@ -5,8 +5,10 @@
 ; functions
 
 ; create server
+; create websocket server
 ; listen server
-; start executor
+; create server for frontend
+; listen frontend server
 
 ;; requires
 const net = require('node:net');
@@ -16,10 +18,8 @@ const server = net.createServer((c) => {
   console.log('client connected');
   c.on('data', (data) => {
     ; load json
-    const status = "Done";
-    ; handle message
+    ; send msg to connected clients
     ; send response back
-    ; notify that message has been received
   });
   c.on('end', () => {
     console.log('client disconnected');
@@ -49,4 +49,101 @@ server.listen(port, () => {
 const msg = JSON.parse(data.toString());
 
 ;; send response back
-c.write(JSON.stringify({"status": status}) + "\n");
+c.write(JSON.stringify({"status": "Done"}) + "\n");
+
+;; requires
+const ws = require("ws");
+
+;; variables
+var ws_clients = [];
+
+;; create websocket server
+const wss = new ws.WebSocketServer({port: 8091});
+
+wss.on('connection', (ws) => {
+  console.log('websocket client connected');
+  ; add ws client
+  ws.on('error', console.error);
+  ws.on('message', (data) => {
+    ; handle ws message
+  });
+  ws.on('close', () => {
+    ; remove ws client
+  });
+});
+
+;; add ws client
+ws_clients.push(ws);
+
+;; remove ws client
+const idx = ws_clients.indexOf(ws);
+if(idx != -1)
+{
+  ws_clients.splice(idx, 1);
+}
+
+;; requires
+const http = require('node:http');
+
+;; create server for frontend
+const frontend_server = http.createServer((req, res) => {
+  var content = "";
+  var content_type = "";
+  ; parse request
+  ; read content if present
+});
+
+;; listen frontend server
+const frontend_port = 8092;
+frontend_server.listen(frontend_port, () => {
+  console.log(`Frontend Server listening on port ${frontend_port}`);
+});
+
+;; requires
+const fs = require('fs');
+const path = require('path');
+
+;; parse request
+var url = req.url;
+if(url == '/')
+{
+  url = '/index.html';
+}
+
+const filepath = path.join(path.dirname(path.dirname(__filename)), 'frontend', 'frontend_js', url);
+console.log(filepath);
+const ext = path.extname(filepath);
+
+;; read content if present
+fs.readFile(filepath, 'utf8', (err, data) => {
+  if(!err && data)
+  {
+    ; send content type depending on extension
+    ; send content
+  }
+});
+
+;; send content type depending on extension
+var content_type = 'text/plain';
+if(ext == '.html')
+{
+  content_type = 'text/html';
+}
+else if(ext == '.js')
+{
+  content_type = 'text/javascript';
+}
+else if(ext == '.css')
+{
+  content_type = 'text/css';
+}
+res.writeHead(200, { 'Content-Type': content_type });
+
+;; send content
+res.end(data);
+
+;; send msg to connected clients
+for(var i=0; i<ws_clients.length; i++)
+{
+  ws_clients[i].send(data.toString());
+}
