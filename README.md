@@ -34,8 +34,7 @@ Realtime application typically having an infinite main loop can be modified whil
 	- [ ] Interrupt kernel
 	- [ ] Restart kernel
 	- [ ] Multiple kernels
-	- [ ] browser frontend
-	- [ ] error display in frontend
+	- [x] browser frontend
 
 ### Backends
 

@@ -103,7 +103,7 @@ const frontend_server = http.createServer((req, res) => {
 
 });
 
-const frontend_port = 8092;
+const frontend_port = 8090;
 frontend_server.listen(frontend_port, () => {
   console.log(`Frontend Server listening on port ${frontend_port}`);
 });
