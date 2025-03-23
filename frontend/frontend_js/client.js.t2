@@ -1,6 +1,7 @@
 ;;; frontend_js
 :: ./client.js
 ; variables
+; declare
 ; functions
 window.onload = () =>
 {

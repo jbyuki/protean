@@ -51,7 +51,6 @@ wss.on('connection', (ws) => {
   ws.on('message', (data) => {
     const ws_msg = JSON.parse(data);
     console.log(ws_msg);
-
     if(ws_msg['cmd'] == 'fileRead')
     {
       const filename = ws_msg['path'];

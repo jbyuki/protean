@@ -14,6 +14,8 @@ var sleeping = true;
 
 var readfile_cb = {};
 
+var readfile;
+
 function tangle(name, prefix="", blacklist=[])
 {
   if(blacklist.indexOf(name) != -1)
@@ -84,7 +86,7 @@ function execute()
 
     try
     {
-      eval(code);
+      eval(`(async () => { ${code} })()`);
     }
     catch(err)
     {
@@ -103,7 +105,7 @@ function execute()
 
     try
     {
-      eval(code);
+      eval(`(async () => { ${code} })()`);
     }
     catch(err)
     {
@@ -125,6 +127,20 @@ function execute()
 
 }
 
+function importfile(filename)
+{
+  readfile(filename, (content) => {
+    console.assert(content !== null);
+    try 
+    {
+      eval(content);
+    }
+    catch(err)
+    {
+      console.error(err);
+    }
+  });
+}
 function readfile(filename, cb)
 {
   const ws_msg = {

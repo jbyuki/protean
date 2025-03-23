@@ -1,15 +1,6 @@
-var canvas = document.createElement('canvas');
-canvas.id = 'canvas';
+const sleep = msec => new Promise(resolve => setTimeout(resolve, msec));
 
-document.body.appendChild(canvas);
-
-canvas.width = 640;
-canvas.height = 480;
-
-ctx = canvas.getContext('2d');
-console.log(ctx);
-
-ctx.fillStyle = "rgb(200 0 0)";
-ctx.fillRect(0, 0, 640, 480);
-
+console.log('hi');
+await sleep(1000);
+console.log('end');
 

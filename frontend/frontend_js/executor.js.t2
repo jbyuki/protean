@@ -23,7 +23,7 @@ const code = tangled[name].join('\n');
 ;; execute code
 try
 {
-  eval(code);
+  eval(`(async () => { ${code} })()`);
 }
 catch(err)
 {
@@ -44,7 +44,7 @@ if(execute_loop && ("loop" in tangled))
 ;; execute code loop
 try
 {
-  eval(code);
+  eval(`(async () => { ${code} })()`);
 }
 catch(err)
 {

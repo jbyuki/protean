@@ -160,33 +160,3 @@ for(var i=0; i<ws_clients.length; i++)
 ;; parse ws message to json
 const ws_msg = JSON.parse(data);
 console.log(ws_msg);
-
-;; if ws message is file read request
-if(ws_msg['cmd'] == 'fileRead')
-{
-  const filename = ws_msg['path'];
-  fs.readFile(filename, 'utf8', (err, content) => {
-    if(!err && content)
-    {
-      ; send file read response with content
-    }
-    else
-    {
-      ; send file read response with null content
-    }
-  });
-}
-
-;; send file read response with content
-ws.send(JSON.stringify({
-  cmd: 'fileRead',
-  path: filename,
-  content: content,
-}));
-
-;; send file read response with null content
-ws.send(JSON.stringify({
-  cmd: 'fileRead',
-  path: filename,
-  content: null,
-}));

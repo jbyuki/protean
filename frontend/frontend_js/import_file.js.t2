@@ -1,0 +1,19 @@
+;;; frontend_js
+;; declare
+var readfile;
+
+;; functions
+function importfile(filename)
+{
+  readfile(filename, (content) => {
+    console.assert(content !== null);
+    try 
+    {
+      eval(content);
+    }
+    catch(err)
+    {
+      console.error(err);
+    }
+  });
+}
