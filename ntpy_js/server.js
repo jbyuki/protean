@@ -19,6 +19,7 @@ const server = net.createServer((c) => {
     {
       ws_clients[i].send(data.toString());
     }
+
     c.write(JSON.stringify({"status": "Done"}) + "\n");
 
   });
@@ -48,6 +49,34 @@ wss.on('connection', (ws) => {
 
   ws.on('error', console.error);
   ws.on('message', (data) => {
+    const ws_msg = JSON.parse(data);
+    console.log(ws_msg);
+
+    if(ws_msg['cmd'] == 'fileRead')
+    {
+      const filename = ws_msg['path'];
+      fs.readFile(filename, 'utf8', (err, data) => {
+        if(!err && data)
+        {
+          ws.send(JSON.stringify({
+            cmd: 'fileRead',
+            path: filename,
+            content: data,
+          }));
+
+        }
+        else
+        {
+          ws.send(JSON.stringify({
+            cmd: 'fileRead',
+            path: filename,
+            content: null,
+          }));
+        }
+      });
+    }
+
+
   });
   ws.on('close', () => {
     console.log('websocket client disconnected');
@@ -75,7 +104,7 @@ const frontend_server = http.createServer((req, res) => {
   }
 
   const filepath = path.join(path.dirname(path.dirname(__filename)), 'frontend', 'frontend_js', url);
-  console.log(filepath);
+  console.log(url);
   const ext = path.extname(filepath);
 
   fs.readFile(filepath, 'utf8', (err, data) => {
@@ -94,7 +123,11 @@ const frontend_server = http.createServer((req, res) => {
       {
         content_type = 'text/css';
       }
-      res.writeHead(200, { 'Content-Type': content_type });
+      res.writeHead(200, { 
+        'Content-Type': content_type,
+        'Access-Control-Allow-Origin': 'http://localhost:8090',
+        'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE'
+      });
 
       res.end(data);
 

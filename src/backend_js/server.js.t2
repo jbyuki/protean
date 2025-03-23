@@ -112,7 +112,7 @@ if(url == '/')
 }
 
 const filepath = path.join(path.dirname(path.dirname(__filename)), 'frontend', 'frontend_js', url);
-console.log(filepath);
+console.log(url);
 const ext = path.extname(filepath);
 
 ;; read content if present
@@ -138,7 +138,11 @@ else if(ext == '.css')
 {
   content_type = 'text/css';
 }
-res.writeHead(200, { 'Content-Type': content_type });
+res.writeHead(200, { 
+  'Content-Type': content_type,
+  'Access-Control-Allow-Origin': 'http://localhost:8090',
+  'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE'
+});
 
 ;; send content
 res.end(data);
@@ -148,3 +152,41 @@ for(var i=0; i<ws_clients.length; i++)
 {
   ws_clients[i].send(data.toString());
 }
+
+;; handle ws message
+; parse ws message to json
+; if ws message is file read request
+
+;; parse ws message to json
+const ws_msg = JSON.parse(data);
+console.log(ws_msg);
+
+;; if ws message is file read request
+if(ws_msg['cmd'] == 'fileRead')
+{
+  const filename = ws_msg['path'];
+  fs.readFile(filename, 'utf8', (err, data) => {
+    if(!err && data)
+    {
+      ; send file read response with content
+    }
+    else
+    {
+      ; send file read response with null content
+    }
+  });
+}
+
+;; send file read response with content
+ws.send(JSON.stringify({
+  cmd: 'fileRead',
+  path: filename,
+  content: data,
+}));
+
+;; send file read response with null content
+ws.send(JSON.stringify({
+  cmd: 'fileRead',
+  path: filename,
+  content: null,
+}));

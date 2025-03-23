@@ -1,3 +1,5 @@
+var socket;
+
 var sections = {};
 
 var tangled = {};
@@ -9,6 +11,8 @@ var pending_sections = [];
 var execute_loop = false;
 
 var sleeping = true;
+
+var readfile_cb = null;
 
 function tangle(name, prefix="", blacklist=[])
 {
@@ -117,9 +121,19 @@ function execute()
 
 }
 
+function readfile(filename, cb)
+{
+  const ws_msg = {
+    cmd: 'fileRead',
+    path: filename
+  };
+  readfile_cb = cb;
+  socket.send(JSON.stringify(ws_msg));
+}
+
 window.onload = () =>
 {
-  const socket = new WebSocket("ws://localhost:8091/ws");
+  socket = new WebSocket("ws://localhost:8091/ws");
 
   socket.onopen = (event) => {
   };
@@ -175,6 +189,18 @@ window.onload = () =>
     else if(msg['cmd'] == 'killLoop')
     {
       execute_loop = false;
+    }
+    else if(msg['cmd'] == 'fileRead')
+    {
+      if(readfile_cb !== null)
+      {
+        readfile_cb(msg['content']);
+        readfile_cb = null;
+      }
+      else
+      {
+        console.error("fileRead response but missing callback");
+      }
     }
   };
 

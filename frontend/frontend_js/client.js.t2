@@ -8,8 +8,11 @@ window.onload = () =>
   ; set websocket callbacks
 }
 
+;; variables
+var socket;
+
 ;; create websocket
-const socket = new WebSocket("ws://localhost:8091/ws");
+socket = new WebSocket("ws://localhost:8091/ws");
 
 ;; set websocket callbacks
 socket.onopen = (event) => {
@@ -27,6 +30,7 @@ socket.onmessage = (event) => {
   ; parse json message
   ; if message is execute
   ; if message is kill loop
+  ; if message is file read
 };
 
 ;; parse json message

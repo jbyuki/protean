@@ -1,0 +1,28 @@
+;;; frontend_js
+;; variables
+var readfile_cb = null;
+
+;; functions
+function readfile(filename, cb)
+{
+  const ws_msg = {
+    cmd: 'fileRead',
+    path: filename
+  };
+  readfile_cb = cb;
+  socket.send(JSON.stringify(ws_msg));
+}
+
+;; if message is file read
+else if(msg['cmd'] == 'fileRead')
+{
+  if(readfile_cb !== null)
+  {
+    readfile_cb(msg['content']);
+    readfile_cb = null;
+  }
+  else
+  {
+    console.error("fileRead response but missing callback");
+  }
+}
