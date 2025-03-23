@@ -2,5 +2,6 @@
 ;; if message is kill loop
 else if(msg['cmd'] == 'killLoop')
 {
+  console.log('loop killed');
   execute_loop = false;
 }

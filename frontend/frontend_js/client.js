@@ -45,9 +45,12 @@ function tangle(name, prefix="", blacklist=[])
       parent[ref_name] = name;
 
       const ref_lines = tangle(ref_name, prefix + ref_prefix, blacklist);
-      for(const ref_line of ref_lines)
+      if(ref_lines.length > 0)
       {
-        lines.push(prefix + ref_prefix + ref_line);
+        for(const ref_line of ref_lines)
+        {
+          lines.push(prefix + ref_prefix + ref_line);
+        }
       }
 
     }
@@ -61,6 +64,7 @@ function tangle(name, prefix="", blacklist=[])
   blacklist.pop();
 
   tangled[name] = lines;
+  return tangled[name];
 }
 
 function get_root(name)
@@ -192,6 +196,7 @@ window.onload = () =>
 
     else if(msg['cmd'] == 'killLoop')
     {
+      console.log('loop killed');
       execute_loop = false;
     }
     else if(msg['cmd'] == 'fileRead')

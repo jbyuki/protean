@@ -85,6 +85,7 @@ function tangle(name, prefix="", blacklist=[])
   }
   ; pop name to blacklist
   tangled[name] = lines;
+  return tangled[name];
 }
 
 ;; if name in blacklist skip
@@ -126,9 +127,12 @@ const ref_name = matches[2].trim();
 ;; get recursive lines and add them
 ; add to parent list
 const ref_lines = tangle(ref_name, prefix + ref_prefix, blacklist);
-for(const ref_line of ref_lines)
+if(ref_lines.length > 0)
 {
-  lines.push(prefix + ref_prefix + ref_line);
+  for(const ref_line of ref_lines)
+  {
+    lines.push(prefix + ref_prefix + ref_line);
+  }
 }
 
 ;; otherwise just add the line
