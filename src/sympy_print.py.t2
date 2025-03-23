@@ -1,4 +1,4 @@
-;;; ntpy-server
+;;; protean-server
 ;; imports
 from sympy import latex
 

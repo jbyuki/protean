@@ -1,4 +1,4 @@
-;;; ntpy-server
+;;; protean-server
 ;;- handle message
 if msg["cmd"] == "execute":
 	; check message format for execute

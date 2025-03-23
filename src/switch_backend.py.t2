@@ -1,8 +1,8 @@
-;;; ntpy-server
+;;; protean-server
 ;; handle message
 elif msg["cmd"] == "toggleBackend":
   backend_name = matplotlib.get_backend()
-  if backend_name == "module://ntpy_matplotlib_backend":
+  if backend_name == "module://protean_matplotlib_backend":
     matplotlib.rcParams.update(matplotlib.rcParamsDefault)
     matplotlib.use("qtagg")
   else:

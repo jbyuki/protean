@@ -1,4 +1,4 @@
-;;; ntpy-server
+;;; protean-server
 ;; define functions
 async def start_executor():
   global pending_sections

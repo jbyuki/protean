@@ -1,5 +1,5 @@
-;;; ntpy-server
-:: ../ntpy/server.py
+;;; protean-server
+:: ../protean/server.py
 ; imports
 ; classes
 ; variables

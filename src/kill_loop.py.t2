@@ -1,4 +1,4 @@
-;;; ntpy-server
+;;; protean-server
 ;; handle message
 elif msg["cmd"] == "killLoop":
   sections.pop("loop", None)

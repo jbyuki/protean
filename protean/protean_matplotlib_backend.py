@@ -14,9 +14,9 @@ class FigureCanvasNTPY(FigureCanvasSVG):
 
 
 @_Backend.export
-class _BackendNTPY(_Backend):
+class _BackendProtean(_Backend):
   backend_version = matplotlib.__version__
-  FigureCanvas = FigureCanvasNTPY
+  FigureCanvas = FigureCanvasProtean
 
 def flush_figures():
   global figures_to_show 
