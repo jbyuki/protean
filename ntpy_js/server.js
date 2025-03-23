@@ -55,13 +55,13 @@ wss.on('connection', (ws) => {
     if(ws_msg['cmd'] == 'fileRead')
     {
       const filename = ws_msg['path'];
-      fs.readFile(filename, 'utf8', (err, data) => {
-        if(!err && data)
+      fs.readFile(filename, 'utf8', (err, content) => {
+        if(!err && content)
         {
           ws.send(JSON.stringify({
             cmd: 'fileRead',
             path: filename,
-            content: data,
+            content: content,
           }));
 
         }
