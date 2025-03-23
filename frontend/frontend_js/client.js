@@ -111,7 +111,7 @@ function execute()
 
   if(execute_loop && ("loop" in tangled))
   {
-    setTimeout(execute, 0);
+    requestAnimationFrame(execute);
   }
 
   else
@@ -184,7 +184,7 @@ window.onload = () =>
         if(sleeping)
         {
           sleeping = false;
-          setTimeout(execute, 0);
+          requestAnimationFrame(execute);
         }
 
       }

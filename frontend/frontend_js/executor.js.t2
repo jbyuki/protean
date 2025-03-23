@@ -55,7 +55,7 @@ catch(err)
 ;; if loop enabled call itself
 if(execute_loop && ("loop" in tangled))
 {
-  setTimeout(execute, 0);
+  requestAnimationFrame(execute);
 }
 
 ;; otherwise go in sleep mode
@@ -71,6 +71,6 @@ var sleeping = true;
 if(sleeping)
 {
   sleeping = false;
-  setTimeout(execute, 0);
+  requestAnimationFrame(execute);
 }
 
