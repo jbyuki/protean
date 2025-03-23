@@ -1,12 +1,6 @@
 # protean
 
-`protean` is a server which runs literate python designed for the experimentation of realtime applications.  
-
-### Browser front-end
-
-![image](https://github.com/user-attachments/assets/7df09d03-6baf-46c6-901a-87f90397c1f8)
-
-Printing and plotting from the server can be visualized in a browser front-end. It supports mathplotlib figures, LaTeX rendering.
+`protean` is a server which runs literate code designed for the experimentation of realtime applications.  
 
 ### Interactive computing with realtime applications
 
