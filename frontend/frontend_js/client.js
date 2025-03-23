@@ -127,7 +127,11 @@ function readfile(filename, cb)
     cmd: 'fileRead',
     path: filename
   };
-  readfile_cb[filename] = cb;
+
+  readfile_cb[filename] = (content) => {
+    cb(content);
+  };
+
   socket.send(JSON.stringify(ws_msg));
 }
 
@@ -197,7 +201,6 @@ window.onload = () =>
         if(fn == msg['path'])
         {
           readfile_cb[fn](msg['content']);
-          delete readfile_cb[fn];
           break;
         }
       }
