@@ -12,7 +12,7 @@ var execute_loop = false;
 
 var sleeping = true;
 
-var readfile_cb = null;
+var readfile_cb = {};
 
 function tangle(name, prefix="", blacklist=[])
 {
@@ -127,7 +127,7 @@ function readfile(filename, cb)
     cmd: 'fileRead',
     path: filename
   };
-  readfile_cb = cb;
+  readfile_cb[filename] = cb;
   socket.send(JSON.stringify(ws_msg));
 }
 
@@ -192,14 +192,14 @@ window.onload = () =>
     }
     else if(msg['cmd'] == 'fileRead')
     {
-      if(readfile_cb !== null)
+      for(const fn in readfile_cb)
       {
-        readfile_cb(msg['content']);
-        readfile_cb = null;
-      }
-      else
-      {
-        console.error("fileRead response but missing callback");
+        if(fn == msg['path'])
+        {
+          readfile_cb[fn](msg['content']);
+          delete readfile_cb[fn];
+          break;
+        }
       }
     }
   };
