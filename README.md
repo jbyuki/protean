@@ -12,23 +12,23 @@ Realtime application typically having an infinite main loop can be modified whil
 
 #### Python:
 
-	- [x] Execute
-	- [ ] Interrupt kernel
-	- [ ] Restart kernel
-	- [ ] Multiple kernels
-	- [x] browser frontend
-	- [x] error display in frontend
-	- [x] redirect stdout to frontend
-	- [x] display latex in frontend
-	- [x] redirect plots to frontend
+- [x] Execute
+- [ ] Interrupt kernel
+- [ ] Restart kernel
+- [ ] Multiple kernels
+- [x] browser frontend
+- [x] error display in frontend
+- [x] redirect stdout to frontend
+- [x] display latex in frontend
+- [x] redirect plots to frontend
 
 #### Javascript:
 
-	- [x] Execute
-	- [ ] Interrupt kernel
-	- [ ] Restart kernel
-	- [ ] Multiple kernels
-	- [x] browser frontend
+- [x] Execute
+- [ ] Interrupt kernel
+- [ ] Restart kernel
+- [ ] Multiple kernels
+- [x] browser frontend
 
 ### Backends
 
