@@ -3,17 +3,16 @@
 var readfile;
 
 ;; functions
-function importfile(filename)
+async function importfile(filename)
 {
-  readfile(filename, (content) => {
-    console.assert(content !== null);
-    try 
-    {
-      eval(content);
-    }
-    catch(err)
-    {
-      console.error(err);
-    }
-  });
+  const content = await readfile(filename);
+  console.assert(content !== null);
+  try 
+  {
+    eval(content);
+  }
+  catch(err)
+  {
+    console.error(err);
+  }
 }

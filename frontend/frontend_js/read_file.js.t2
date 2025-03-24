@@ -3,18 +3,21 @@
 var readfile_cb = {};
 
 ;; functions
-function readfile(filename, cb)
+function readfile(filename)
 {
   const ws_msg = {
     cmd: 'fileRead',
     path: filename
   };
 
-  readfile_cb[filename] = (content) => {
-    cb(content);
-  };
+  const promise = new Promise((resolve) => {
+    readfile_cb[filename] = (content) => {
+      resolve(content);
+    };
+  });
 
   socket.send(JSON.stringify(ws_msg));
+  return promise;
 }
 
 ;; if message is file read

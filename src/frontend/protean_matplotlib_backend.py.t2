@@ -1,4 +1,4 @@
-:: ../../ntpy/ntpy_matplotlib_backend.py
+:: ../../protean/protean_matplotlib_backend.py
 ; imports
 ; variables
 ; figure canvas
@@ -12,7 +12,7 @@ import matplotlib
 from matplotlib.backends.backend_svg import FigureCanvasSVG,_BackendSVG
 
 ;; figure canvas
-class FigureCanvasNTPY(FigureCanvasSVG):
+class FigureCanvasProtean(FigureCanvasSVG):
   def __init__(self, figure, *args, **kwargs):
     FigureCanvasSVG.__init__(self, figure, *args, **kwargs)
     ; add figure
@@ -22,9 +22,9 @@ from matplotlib.backend_bases import _Backend
 
 ;; register backend 
 @_Backend.export
-class _BackendNTPY(_Backend):
+class _BackendProtean(_Backend):
   backend_version = matplotlib.__version__
-  FigureCanvas = FigureCanvasNTPY
+  FigureCanvas = FigureCanvasProtean
 
 ;; variables
 figures_to_show = []

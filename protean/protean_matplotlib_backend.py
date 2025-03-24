@@ -6,7 +6,7 @@ from matplotlib.backend_bases import _Backend
 
 figures_to_show = []
 
-class FigureCanvasNTPY(FigureCanvasSVG):
+class FigureCanvasProtean(FigureCanvasSVG):
   def __init__(self, figure, *args, **kwargs):
     FigureCanvasSVG.__init__(self, figure, *args, **kwargs)
     global figures_to_show 

@@ -1,4 +1,4 @@
-;;; ../ntpy-server
+;;; ../protean-server
 ;; define functions
 def msg_log(text):
   msg = {}

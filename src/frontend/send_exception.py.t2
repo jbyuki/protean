@@ -1,4 +1,4 @@
-;;; ../ntpy-server
+;;; ../protean-server
 ;; define functions
 def msg_exception(txt, lines):
   ; get task id

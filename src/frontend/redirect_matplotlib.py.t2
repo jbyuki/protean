@@ -1,12 +1,12 @@
-;;; ../ntpy-server
+;;; ../protean-server
 ;; imports
 import matplotlib
 
 ;; use ntpy matplotlib backend
-matplotlib.use('module://ntpy_matplotlib_backend')
+matplotlib.use('module://protean_matplotlib_backend')
 
 ;; imports
-from ntpy_matplotlib_backend import flush_figures
+from protean_matplotlib_backend import flush_figures
 
 ;; flush matplotlib figures
 new_figs = flush_figures()

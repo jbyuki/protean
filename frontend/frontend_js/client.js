@@ -127,32 +127,34 @@ function execute()
 
 }
 
-function importfile(filename)
+async function importfile(filename)
 {
-  readfile(filename, (content) => {
-    console.assert(content !== null);
-    try 
-    {
-      eval(content);
-    }
-    catch(err)
-    {
-      console.error(err);
-    }
-  });
+  const content = await readfile(filename);
+  console.assert(content !== null);
+  try 
+  {
+    eval(content);
+  }
+  catch(err)
+  {
+    console.error(err);
+  }
 }
-function readfile(filename, cb)
+function readfile(filename)
 {
   const ws_msg = {
     cmd: 'fileRead',
     path: filename
   };
 
-  readfile_cb[filename] = (content) => {
-    cb(content);
-  };
+  const promise = new Promise((resolve) => {
+    readfile_cb[filename] = (content) => {
+      resolve(content);
+    };
+  });
 
   socket.send(JSON.stringify(ws_msg));
+  return promise;
 }
 
 window.onload = () =>

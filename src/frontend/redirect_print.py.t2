@@ -1,4 +1,4 @@
-;;; ../ntpy-server
+;;; ../protean-server
 ;; imports
 import sys
 from io import StringIO
