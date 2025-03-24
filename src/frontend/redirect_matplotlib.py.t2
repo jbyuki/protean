@@ -42,10 +42,16 @@ for frontend_writer in frontend_writers:
     frontend_writer.send(msg_svg_output(svg))
     await frontend_writer.drain()
 
+;; imports
+import darkdetect
+
 ;; use ntpy matplotlib backend
-params = {"ytick.color" : "w",
-          "xtick.color" : "w",
-          "axes.titlecolor" : "w",
-          "axes.labelcolor" : "w",
-          "axes.edgecolor" : "w"}
+if darkdetect.isDark():
+  params = {"ytick.color" : "w",
+            "xtick.color" : "w",
+            "axes.titlecolor" : "w",
+            "axes.labelcolor" : "w",
+            "axes.edgecolor" : "w"}
+else:
+  params = {}
 plt.rcParams.update(params)

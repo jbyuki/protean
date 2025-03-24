@@ -12,6 +12,8 @@ from protean_matplotlib_backend import flush_figures
 import io
 import matplotlib.pyplot as plt
 
+import darkdetect
+
 import sys
 from io import StringIO
 
@@ -466,11 +468,14 @@ def tangle_rec(name, sections, tangled, parent_section, blacklist, prefix):
 async def start_server(host='localhost', port=8089):
 	matplotlib.use('module://protean_matplotlib_backend')
 
-	params = {"ytick.color" : "w",
-	          "xtick.color" : "w",
-	          "axes.titlecolor" : "w",
-	          "axes.labelcolor" : "w",
-	          "axes.edgecolor" : "w"}
+	if darkdetect.isDark():
+	  params = {"ytick.color" : "w",
+	            "xtick.color" : "w",
+	            "axes.titlecolor" : "w",
+	            "axes.labelcolor" : "w",
+	            "axes.edgecolor" : "w"}
+	else:
+	  params = {}
 	plt.rcParams.update(params)
 	server = await asyncio.start_server(on_connect, host, port)
 	print(f"Server started on {port}")
@@ -566,11 +571,14 @@ async def on_connect(reader, writer):
 		  else:
 		    matplotlib.use('module://protean_matplotlib_backend')
 
-		    params = {"ytick.color" : "w",
-		              "xtick.color" : "w",
-		              "axes.titlecolor" : "w",
-		              "axes.labelcolor" : "w",
-		              "axes.edgecolor" : "w"}
+		    if darkdetect.isDark():
+		      params = {"ytick.color" : "w",
+		                "xtick.color" : "w",
+		                "axes.titlecolor" : "w",
+		                "axes.labelcolor" : "w",
+		                "axes.edgecolor" : "w"}
+		    else:
+		      params = {}
 		    plt.rcParams.update(params)
 		  log_debug(f"new backend {matplotlib.get_backend()}")
 		else:
