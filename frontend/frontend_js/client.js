@@ -38,9 +38,9 @@ function tangle(name, prefix="", blacklist=[])
   const lines = [];
   for(const line of sections[name])
   {
-    if(/\w*;[^;].*/.test(line))
+    if(/^\s*;[^;].*/.test(line))
     {
-      const matches = line.match(/(\w*);([^;].*)/);
+      const matches = line.match(/(\s*);([^;].*)/);
       const ref_prefix = matches[1];
       const ref_name = matches[2].trim();
 

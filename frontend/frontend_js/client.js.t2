@@ -114,14 +114,14 @@ if(!(name in sections))
 }
 
 ;; if line is reference recurse
-if(/\w*;[^;].*/.test(line))
+if(/^\s*;[^;].*/.test(line))
 {
   ; extract prefix reference name
   ; get recursive lines and add them
 }
 
 ;; extract prefix reference name
-const matches = line.match(/(\w*);([^;].*)/);
+const matches = line.match(/(\s*);([^;].*)/);
 const ref_prefix = matches[1];
 const ref_name = matches[2].trim();
 
