@@ -177,5 +177,8 @@ var execute_loop = false;
 ;; if packet is loop resume loop
 else
 {
-  execute_loop = true;
+  if(name == "loop") 
+  {
+    execute_loop = true;
+  }
 }

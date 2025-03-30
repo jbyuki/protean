@@ -201,7 +201,10 @@ window.onload = () =>
 
         else
         {
-          execute_loop = true;
+          if(name == "loop") 
+          {
+            execute_loop = true;
+          }
         }
         if(sleeping)
         {
