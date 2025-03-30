@@ -69,13 +69,15 @@ function tangle(name, prefix="", blacklist=[])
   return tangled[name];
 }
 
-function get_root(name)
+function has_parent(name, candidate)
 {
-  if(!(name in parent))
-  {
-    return name;
+  if(name == candidate) {
+    return true;
   }
-  return get_root(parent[name]);
+  if(!(name in parent)) {
+    return false;
+  }
+  return has_parent(parent[name], candidate);
 }
 
 function execute()
@@ -193,8 +195,7 @@ window.onload = () =>
 
       if(data['execute'])
       {
-        const root = get_root(name);
-        if(root != "loop")
+        if(!has_parent(name, "loop"))
         {
           pending_sections.push(name);
         }

@@ -152,21 +152,22 @@ parent = {};
 parent[ref_name] = name;
 
 ;; functions
-function get_root(name)
+function has_parent(name, candidate)
 {
-  if(!(name in parent))
-  {
-    return name;
+  if(name == candidate) {
+    return true;
   }
-  return get_root(parent[name]);
+  if(!(name in parent)) {
+    return false;
+  }
+  return has_parent(parent[name], candidate);
 }
 
 ;; variables
 var pending_sections = [];
 
 ;; if parent is not loop add to pending sections
-const root = get_root(name);
-if(root != "loop")
+if(!has_parent(name, "loop"))
 {
   pending_sections.push(name);
 }
