@@ -3,6 +3,11 @@
   background: #FFF;
 }
 
+html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
 @media(prefers-color-scheme: dark) 
 {
   .theme.adaptive
