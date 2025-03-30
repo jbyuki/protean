@@ -8,6 +8,10 @@ html, body {
     padding: 0 !important;
 }
 
+html, body {
+    overflow: hidden;
+}
+
 @media(prefers-color-scheme: dark) 
 {
   .theme.adaptive
@@ -15,4 +19,5 @@ html, body {
     background: #111;
   }
 }
+
 
