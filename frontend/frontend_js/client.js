@@ -88,7 +88,8 @@ function execute()
 
     try
     {
-      eval(`(async () => { ${code} })()`);
+      // eval(`(async () => { ${code} })()`);
+      (new Function(`(async () => { ${code} })()`))();
     }
     catch(err)
     {
@@ -107,7 +108,7 @@ function execute()
 
     try
     {
-      eval(`(async () => { ${code} })()`);
+      (new Function(`(async () => { ${code} })()`))();
     }
     catch(err)
     {
