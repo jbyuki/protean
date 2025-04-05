@@ -18,6 +18,7 @@ const server = net.createServer((c) => {
   console.log('client connected');
   c.on('data', (data) => {
     ; load json
+    ; intercept if server message
     ; send msg to connected clients
     ; send response back
   });
@@ -119,6 +120,7 @@ const ext = path.extname(filepath);
 fs.readFile(filepath, 'utf8', (err, data) => {
   if(!err && data)
   {
+    ; if index html inject import map
     ; send content type depending on extension
     ; send content
   }

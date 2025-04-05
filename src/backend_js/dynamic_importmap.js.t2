@@ -1,0 +1,26 @@
+;;; protean_js
+;; variables
+var importmap = {};
+
+;; requires
+const cheerio = require("cheerio");
+
+;; if index html inject import map
+if(path.basename(filepath) == 'index.html')
+{
+  var $ = cheerio.load(data);
+  $('script[type=importmap]').text(JSON.stringify(importmap))
+  data = $.html();
+}
+
+;; intercept if server message
+if(msg['cmd'] == 'server') {
+  ; handle importmap server message
+  ; send response back
+}
+
+;; handle importmap server message
+if(msg['data']['name'] == 'importmap')
+{
+  importmap = msg['data']['importmap']
+}

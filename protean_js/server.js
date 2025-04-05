@@ -1,3 +1,5 @@
+const cheerio = require("cheerio");
+
 const net = require('node:net');
 
 const ws = require("ws");
@@ -7,6 +9,8 @@ const http = require('node:http');
 const fs = require('fs');
 const path = require('path');
 
+var importmap = {};
+
 var ws_clients = [];
 
 
@@ -14,6 +18,15 @@ const server = net.createServer((c) => {
   console.log('client connected');
   c.on('data', (data) => {
     const msg = JSON.parse(data.toString());
+
+    if(msg['cmd'] == 'server') {
+      if(msg['data']['name'] == 'importmap')
+      {
+        importmap = msg['data']['importmap']
+      }
+      c.write(JSON.stringify({"status": "Done"}) + "\n");
+
+    }
 
     for(var i=0; i<ws_clients.length; i++)
     {
@@ -109,6 +122,13 @@ const frontend_server = http.createServer((req, res) => {
   fs.readFile(filepath, 'utf8', (err, data) => {
     if(!err && data)
     {
+      if(path.basename(filepath) == 'index.html')
+      {
+        var $ = cheerio.load(data);
+        $('script[type=importmap]').text(JSON.stringify(importmap))
+        data = $.html();
+      }
+
       var content_type = 'text/plain';
       if(ext == '.html')
       {
