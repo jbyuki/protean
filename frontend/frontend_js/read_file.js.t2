@@ -3,7 +3,7 @@
 var readfile_cb = {};
 
 ;; functions
-function readfile(filename)
+readfile = function(filename)
 {
   const ws_msg = {
     cmd: 'fileRead',

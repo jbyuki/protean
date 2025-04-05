@@ -142,7 +142,7 @@ async function importfile(filename)
     console.error(err);
   }
 }
-function readfile(filename)
+readfile = function(filename)
 {
   const ws_msg = {
     cmd: 'fileRead',
