@@ -1,1 +1,2 @@
-aiohttp
+darkdetect
+ansi2html
