@@ -32,6 +32,7 @@ socket.onmessage = (event) => {
   ; if message is execute
   ; if message is kill loop
   ; if message is file read
+  ; if message is file binary read
 };
 
 ;; parse json message

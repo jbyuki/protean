@@ -25,6 +25,8 @@ try
 {
   // eval(`(async () => { ${code} })()`);
   (new Function(`(async () => { ${code} })()`))();
+  // (new Function(`${code}`))();
+  // eval(`${code}`);
 }
 catch(err)
 {

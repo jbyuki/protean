@@ -1,11 +1,8 @@
 ;;; frontend_js
-;; declare
-var readfile;
-
 ;; functions
 async function importfile(filename)
 {
-  const content = await readfile(filename);
+  const content = await window.readfile(filename);
   console.assert(content !== null);
   try 
   {

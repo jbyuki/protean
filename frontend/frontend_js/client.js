@@ -14,7 +14,7 @@ var sleeping = true;
 
 var readfile_cb = {};
 
-var readfile;
+var readfile_bin_cb = {};
 
 function tangle(name, prefix="", blacklist=[])
 {
@@ -90,6 +90,8 @@ function execute()
     {
       // eval(`(async () => { ${code} })()`);
       (new Function(`(async () => { ${code} })()`))();
+      // (new Function(`${code}`))();
+      // eval(`${code}`);
     }
     catch(err)
     {
@@ -132,7 +134,7 @@ function execute()
 
 async function importfile(filename)
 {
-  const content = await readfile(filename);
+  const content = await window.readfile(filename);
   console.assert(content !== null);
   try 
   {
@@ -143,7 +145,7 @@ async function importfile(filename)
     console.error(err);
   }
 }
-readfile = function(filename)
+window.readfile = function(filename)
 {
   const ws_msg = {
     cmd: 'fileRead',
@@ -153,6 +155,23 @@ readfile = function(filename)
   const promise = new Promise((resolve) => {
     readfile_cb[filename] = (content) => {
       resolve(content);
+    };
+  });
+
+  socket.send(JSON.stringify(ws_msg));
+  return promise;
+}
+
+window.readfile_bin = function(filename)
+{
+  const ws_msg = {
+    cmd: 'fileBinRead',
+    path: filename
+  };
+
+  const promise = new Promise((resolve) => {
+    readfile_bin_cb[filename] = (content) => {
+      resolve(window.btoa(content));
     };
   });
 
@@ -229,6 +248,17 @@ window.onload = () =>
         if(fn == msg['path'])
         {
           readfile_cb[fn](msg['content']);
+          break;
+        }
+      }
+    }
+    else if(msg['cmd'] == 'fileBinRead')
+    {
+      for(const fn in readfile_bin_cb)
+      {
+        if(fn == msg['path'])
+        {
+          readfile_bin_cb[fn](msg['content']);
           break;
         }
       }

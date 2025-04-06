@@ -88,6 +88,30 @@ wss.on('connection', (ws) => {
       });
     }
 
+    if(ws_msg['cmd'] == 'fileBinRead')
+    {
+      const filename = ws_msg['path'];
+      fs.readFile(filename, null, (err, content) => {
+        if(!err && content)
+        {
+          ws.send(JSON.stringify({
+            cmd: 'fileBinRead',
+            path: filename,
+            content: content.toString('base64'),
+          }));
+
+        }
+        else
+        {
+          ws.send(JSON.stringify({
+            cmd: 'fileBinRead',
+            path: filename,
+            content: null,
+          }));
+        }
+      });
+    }
+
 
   });
   ws.on('close', () => {

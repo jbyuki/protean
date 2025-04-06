@@ -1,0 +1,34 @@
+;;; frontend_js
+;; variables
+var readfile_bin_cb = {};
+
+;; functions
+window.readfile_bin = function(filename)
+{
+  const ws_msg = {
+    cmd: 'fileBinRead',
+    path: filename
+  };
+
+  const promise = new Promise((resolve) => {
+    readfile_bin_cb[filename] = (content) => {
+      resolve(window.btoa(content));
+    };
+  });
+
+  socket.send(JSON.stringify(ws_msg));
+  return promise;
+}
+
+;; if message is file binary read
+else if(msg['cmd'] == 'fileBinRead')
+{
+  for(const fn in readfile_bin_cb)
+  {
+    if(fn == msg['path'])
+    {
+      readfile_bin_cb[fn](msg['content']);
+      break;
+    }
+  }
+}

@@ -158,6 +158,7 @@ for(var i=0; i<ws_clients.length; i++)
 ;; handle ws message
 ; parse ws message to json
 ; if ws message is file read request
+; if ws message is file binary read request
 
 ;; parse ws message to json
 const ws_msg = JSON.parse(data);

@@ -1,0 +1,30 @@
+;;; protean_js
+;; if ws message is file binary read request
+if(ws_msg['cmd'] == 'fileBinRead')
+{
+  const filename = ws_msg['path'];
+  fs.readFile(filename, null, (err, content) => {
+    if(!err && content)
+    {
+      ; send file binary read response with content
+    }
+    else
+    {
+      ; send file binary read response with null content
+    }
+  });
+}
+
+;; send file binary read response with content
+ws.send(JSON.stringify({
+  cmd: 'fileBinRead',
+  path: filename,
+  content: content.toString('base64'),
+}));
+
+;; send file binary read response with null content
+ws.send(JSON.stringify({
+  cmd: 'fileBinRead',
+  path: filename,
+  content: null,
+}));
