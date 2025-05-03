@@ -17,10 +17,14 @@ const net = require('node:net');
 const server = net.createServer((c) => {
   console.log('client connected');
   c.on('data', (data) => {
-    ; load json
-    ; intercept if server message
-    ; send msg to connected clients
-    ; send response back
+    ; split message at newline
+    for(const data_elem of data_list)
+    {
+      ; load json
+      ; intercept if server message
+      ; send msg to connected clients
+      ; send response back
+    }
   });
   c.on('end', () => {
     console.log('client disconnected');
@@ -46,8 +50,12 @@ server.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
 
+;; split message at newline
+var data_list = data.toString().split("\n");
+data_list = data_list.filter((data_elem) => data_elem.trim().length > 0);
+
 ;; load json
-const msg = JSON.parse(data.toString());
+const msg = JSON.parse(data_elem);
 
 ;; send response back
 c.write(JSON.stringify({"status": "Done"}) + "\n");

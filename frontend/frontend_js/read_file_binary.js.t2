@@ -12,7 +12,12 @@ window.readfile_bin = function(filename)
 
   const promise = new Promise((resolve) => {
     readfile_bin_cb[filename] = (content) => {
-      resolve(window.btoa(content));
+      var binaryString = window.atob(content);
+      var bytes = new Uint8Array(binaryString.length);
+      for(var i=0; i<binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+      resolve(bytes.buffer);
     };
   });
 

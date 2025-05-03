@@ -17,24 +17,30 @@ var ws_clients = [];
 const server = net.createServer((c) => {
   console.log('client connected');
   c.on('data', (data) => {
-    const msg = JSON.parse(data.toString());
+    var data_list = data.toString().split("\n");
+    data_list = data_list.filter((data_elem) => data_elem.trim().length > 0);
 
-    if(msg['cmd'] == 'server') {
-      if(msg['data']['name'] == 'importmap')
-      {
-        importmap = msg['data']['importmap']
+    for(const data_elem of data_list)
+    {
+      const msg = JSON.parse(data_elem);
+
+      if(msg['cmd'] == 'server') {
+        if(msg['data']['name'] == 'importmap')
+        {
+          importmap = msg['data']['importmap']
+        }
+        c.write(JSON.stringify({"status": "Done"}) + "\n");
+
       }
+
+      for(var i=0; i<ws_clients.length; i++)
+      {
+        ws_clients[i].send(data.toString());
+      }
+
       c.write(JSON.stringify({"status": "Done"}) + "\n");
 
     }
-
-    for(var i=0; i<ws_clients.length; i++)
-    {
-      ws_clients[i].send(data.toString());
-    }
-
-    c.write(JSON.stringify({"status": "Done"}) + "\n");
-
   });
   c.on('end', () => {
     console.log('client disconnected');
