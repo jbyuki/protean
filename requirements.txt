@@ -1,2 +1,4 @@
 darkdetect
 ansi2html
+matplotlib
+sympy
