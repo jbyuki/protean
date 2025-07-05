@@ -132,7 +132,7 @@ function execute()
 
 }
 
-async function importfile(filename)
+window.importfile = async function(filename)
 {
   const content = await window.readfile(filename);
   console.assert(content !== null);
