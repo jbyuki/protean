@@ -28,15 +28,22 @@ socket.onerror = (event) => {
 };
 
 socket.onmessage = (event) => {
-  ; parse json message
-  ; if message is execute
-  ; if message is kill loop
-  ; if message is file read
-  ; if message is file binary read
+  for(const data_line of event.data.split(/\r?\n/))
+  {
+    if(data_line.trim().length == 0)
+    {
+      continue;
+    }
+    ; parse json message
+    ; if message is execute
+    ; if message is kill loop
+    ; if message is file read
+    ; if message is file binary read
+  }
 };
 
 ;; parse json message
-const msg = JSON.parse(event.data);
+const msg = JSON.parse(data_line);
 
 ;; if message is execute
 if(msg['cmd'] == 'execute')

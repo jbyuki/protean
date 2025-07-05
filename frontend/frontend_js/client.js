@@ -200,71 +200,78 @@ window.onload = () =>
   };
 
   socket.onmessage = (event) => {
-    const msg = JSON.parse(event.data);
-
-    if(msg['cmd'] == 'execute')
+    for(const data_line of event.data.split(/\r?\n/))
     {
-      const data = msg['data'];
-      const name = data['name'];
-      const lines = data['lines'];
-
-      sections[name] = lines
-
-      tangled = {};
-      parent = {};
-
-      for(const name in sections)
+      if(data_line.trim().length == 0)
       {
-        tangle(name);
+        continue;
       }
+      const msg = JSON.parse(data_line);
 
-      if(data['execute'])
+      if(msg['cmd'] == 'execute')
       {
-        if(!has_parent(name, "loop"))
+        const data = msg['data'];
+        const name = data['name'];
+        const lines = data['lines'];
+
+        sections[name] = lines
+
+        tangled = {};
+        parent = {};
+
+        for(const name in sections)
         {
-          pending_sections.push(name);
+          tangle(name);
         }
 
-        else
+        if(data['execute'])
         {
-          if(name == "loop") 
+          if(!has_parent(name, "loop"))
           {
-            execute_loop = true;
+            pending_sections.push(name);
+          }
+
+          else
+          {
+            if(name == "loop") 
+            {
+              execute_loop = true;
+            }
+          }
+          if(sleeping)
+          {
+            sleeping = false;
+            requestAnimationFrame(execute);
+          }
+
+        }
+      }
+
+      else if(msg['cmd'] == 'killLoop')
+      {
+        console.log('loop killed');
+        execute_loop = false;
+      }
+      else if(msg['cmd'] == 'fileRead')
+      {
+        for(const fn in readfile_cb)
+        {
+          if(fn == msg['path'])
+          {
+            readfile_cb[fn](msg['content']);
+            break;
           }
         }
-        if(sleeping)
-        {
-          sleeping = false;
-          requestAnimationFrame(execute);
-        }
-
       }
-    }
-
-    else if(msg['cmd'] == 'killLoop')
-    {
-      console.log('loop killed');
-      execute_loop = false;
-    }
-    else if(msg['cmd'] == 'fileRead')
-    {
-      for(const fn in readfile_cb)
+      else if(msg['cmd'] == 'fileBinRead')
       {
-        if(fn == msg['path'])
+        for(const fn in readfile_bin_cb)
         {
-          readfile_cb[fn](msg['content']);
-          break;
-        }
-      }
-    }
-    else if(msg['cmd'] == 'fileBinRead')
-    {
-      for(const fn in readfile_bin_cb)
-      {
-        if(fn == msg['path'])
-        {
-          readfile_bin_cb[fn](msg['content']);
-          break;
+          if(fn == msg['path'])
+          {
+            readfile_bin_cb[fn](msg['content']);
+            break;
+          }
         }
       }
     }
