@@ -231,19 +231,17 @@ window.onload = () =>
             pending_sections.push(name);
           }
 
-          else
-          {
-            if(name == "loop") 
-            {
-              execute_loop = true;
-            }
-          }
           if(sleeping)
           {
             sleeping = false;
             requestAnimationFrame(execute);
           }
 
+        }
+
+        if(name == "loop") 
+        {
+          execute_loop = true;
         }
       }
 

@@ -57,9 +57,10 @@ if(msg['cmd'] == 'execute')
   if(data['execute'])
   {
     ; if parent is not loop add to pending sections
-    ; if packet is loop resume loop
     ; resume executor if sleeping
   }
+
+  ; if packet is loop resume loop
 }
 
 ;; variables
@@ -184,10 +185,7 @@ if(!has_parent(name, "loop"))
 var execute_loop = false;
 
 ;; if packet is loop resume loop
-else
+if(name == "loop") 
 {
-  if(name == "loop") 
-  {
-    execute_loop = true;
-  }
+  execute_loop = true;
 }
