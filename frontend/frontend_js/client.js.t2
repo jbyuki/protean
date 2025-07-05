@@ -135,7 +135,7 @@ const ref_name = matches[2].trim();
 
 ;; get recursive lines and add them
 ; add to parent list
-const ref_lines = tangle(ref_name, prefix + ref_prefix, blacklist);
+const ref_lines = tangle(ref_name, prefix + ref_prefix, blacklist.slice());
 if(ref_lines.length > 0)
 {
   for(const ref_line of ref_lines)

@@ -46,7 +46,7 @@ function tangle(name, prefix="", blacklist=[])
 
       parent[ref_name] = name;
 
-      const ref_lines = tangle(ref_name, prefix + ref_prefix, blacklist);
+      const ref_lines = tangle(ref_name, prefix + ref_prefix, blacklist.slice());
       if(ref_lines.length > 0)
       {
         for(const ref_line of ref_lines)
