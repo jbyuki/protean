@@ -1,0 +1,73 @@
+;;; server_love2d
+:: ../protean_lua/love2d/main.lua
+; requires
+; variables
+; functions
+
+local dt
+
+function love.load()
+  ; create tcp server
+end
+
+function love.update(dt)
+  dt = dt
+end
+
+function love.draw()
+  ; check for any client connection
+  ; read from all connected clients
+  ; run any pending sections
+  ; run loop section if active
+end
+
+;; requires
+local socket = require"socket"
+
+;; variables
+local server
+
+;; create tcp server
+local port = 8089
+server = socket.bind("127.0.0.1", port)
+print(("Server running on port %d"):format(port))
+server:settimeout(0)
+
+;; check for any client connection
+local client = server:accept()
+if client then
+  print("Client connected!")
+  client:settimeout(0)
+  local client_co = coroutine.create(function(client)
+    while true do
+      coroutine.yield()
+      local data, err = client:receive()
+      if data then
+        ; decode string json
+        ; process each command
+      elseif err == "closed" then
+        break
+      end
+    end
+  end)
+
+  ; resume coroutine and append to list
+end
+
+;; variables
+local client_cos = {}
+
+;; resume coroutine and append to list
+coroutine.resume(client_co, client)
+table.insert(client_cos, client_co)
+
+;; read from all connected clients
+local i = 1
+while i <= #client_cos do
+  coroutine.resume(client_cos[i], client)
+  if coroutine.status(client_cos[i]) == "dead" then
+    table.remove(client_cos, i)
+  else
+    i = i + 1
+  end
+end

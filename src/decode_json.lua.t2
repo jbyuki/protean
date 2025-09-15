@@ -1,0 +1,273 @@
+;;; server_love2d
+;; decode string json
+local msgs = {}
+local rest = data
+while #rest > 0 do
+  local msg
+  msg, p = parse_json(rest)
+
+  if type(msg) == "string" then 
+    break 
+  end
+
+  rest = rest:sub(p)
+  table.insert(msgs, msg)
+end
+
+;; functions
+function parse_json(str)
+  local p = 1
+  local parse_co = coroutine.create(function()
+    ; declare json coroutine
+    ; whitespace
+    ; accept
+    ; expect
+    ; next
+    ; parse error
+    ; end of input
+    ; json object
+    ; json array
+    ; json number
+    ; json string
+    ; json value
+    return json_obj()
+  end)
+
+  ; call parse coroutine
+  ; if error return parse error
+  ; otherwise return object
+end
+
+;; declare json coroutine
+local whitespace
+
+;; whitespace
+whitespace = function()
+  while p <= #str do
+    if not str:sub(p,p):find("%s") then
+      break
+    end
+    p = p + 1
+  end
+end
+
+;; declare json coroutine
+local accept
+
+;; accept
+accept = function(sym)
+  if str:sub(p,p + (#sym - 1)) == sym then
+    p = p + #sym
+    return true
+  end
+  return false
+end
+
+;; declare json coroutine
+local expect
+
+;; expect
+expect = function(sym)
+  if str:sub(p,p + (#sym - 1)) == sym then
+    p = p + #sym
+    return true
+  end
+  parse_err(("expected %s but got %s"):format(p, sym, str:sub(p,p)))
+end
+
+;; declare json coroutine
+local json_obj
+
+;; json object
+json_obj = function()
+  expect('{')
+  local result = {}
+
+  whitespace()
+
+  if accept('}') then
+    return result
+  end
+
+  while true do
+    local key = json_str()
+
+    whitespace()
+    expect(':')
+
+    result[key] = json_value()
+
+    if accept('}') then
+      return result
+    end
+
+    expect(',')
+    whitespace()
+  end
+end
+
+;; declare json coroutine
+local json_str
+
+;; json string
+function json_str()
+  expect('"')
+
+  local parts = {}
+
+  while not finished() do
+    if accept('"') then
+      return table.concat(parts)
+    elseif accept('\\') then
+      ; handle control character
+    else
+      table.insert(parts, nextc())
+    end
+  end
+
+  parse_err("end of input reached but no closing '\"'")
+end
+
+;; declare json coroutine
+local finished
+
+;; end of input
+function finished()
+  return p > #str
+end
+
+;; declare json coroutine
+local nextc
+
+;; next
+function nextc()
+  local c = str:sub(p,p)
+  p = p + 1
+  return c
+end
+
+;; handle control character
+if accept('"') then
+  table.insert(parts, '"')
+elseif accept('\\') then
+  table.insert(parts, '\\')
+elseif accept('/') then
+  table.insert(parts, '/')
+elseif accept('b') then
+  table.insert(parts, '\b')
+elseif accept('f') then
+  table.insert(parts, '\f')
+elseif accept('n') then
+  table.insert(parts, '\n')
+elseif accept('r') then
+  table.insert(parts, '\r')
+elseif accept('t') then
+  table.insert(parts, '\t')
+elseif accept('u') then
+  parse_err("Unsupported unicode escape character")
+end
+
+;; declare json coroutine
+local json_array
+
+;; json array
+function json_array()
+  expect('[')
+  whitespace()
+
+  local result = {}
+  if accept(']') then
+    return result
+  end
+
+  while true do
+    table.insert(result, json_value())
+
+    if accept(']') then
+      return result
+    end
+
+    expect(',')
+  end
+
+  parse_err("end of input reached but no closing ']'")
+end
+
+;; declare json coroutine
+local json_number
+
+;; json number
+function json_number()
+  local l = p
+  while l <= #str do
+    local n = str:sub(p,l)
+    if not tonumber(n) then
+      if p == l then
+        parse_err("expected number")
+      else
+        break
+      end
+    end
+    l = l + 1
+  end
+
+  p = l
+  return tonumber(str:sub(p,l-1))
+end
+
+;; declare json coroutine
+local json_value
+local peek
+
+;; next
+peek = function()
+  return str:sub(p,p)
+end
+
+;; json value
+function json_value()
+  whitespace()
+
+  local c = peek()
+  local result
+  if c == '"' then
+    result = json_str()
+  elseif c == '-' or c:find("%d") then
+    result = json_number()
+  elseif c == '{' then
+    result = json_obj()
+  elseif c == '[' then
+    result = json_array()
+  elseif accept('true')  then
+    result = true
+  elseif accept('false')  then
+    result = false
+  elseif accept('null')  then
+    result = nil
+  else
+    parse_err("Expected value")
+  end
+  whitespace()
+
+  return result
+end
+
+;; call parse coroutine
+local result, err = coroutine.resume(parse_co)
+
+;; declare json coroutine
+local parse_err
+
+;; parse error
+function parse_err(msg)
+  coroutine.yield(nil, ("(%d): %s"):format(p, msg))
+end
+
+;; if error return parse error
+if err then
+  return err, p
+
+;; otherwise return object
+else
+  return result, p
+end

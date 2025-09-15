@@ -1,0 +1,9 @@
+;;; server_love2d
+;; process each command
+for _, msg in ipairs(msgs) do
+  if msg["cmd"] == "execute" then
+    ; add or replace section to database
+    ; retangle all sections
+    ; add or replace sections to running sections
+  end
+end

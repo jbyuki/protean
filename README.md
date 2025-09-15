@@ -8,7 +8,16 @@ https://github.com/user-attachments/assets/00f6a6f0-fc03-4252-870e-129511e7baf9
 
 Realtime application typically having an infinite main loop can be modified while they are running.
 
-**work-in-progress**
+**Available Backends**:
+
+| Backends     | Status           |
+|--------------|------------------|
+| Javascript   | :deciduous_tree: |
+| Python       | :deciduous_tree: |
+| Lua (Love2D) | :seedling:       |
+
+* :seedling: : work-in-progress (partially functional)
+* :deciduous_tree: : functional
 
 #### Python:
 
