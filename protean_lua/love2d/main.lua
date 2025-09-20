@@ -1,6 +1,16 @@
 -- Generated using ntangle.nvim
 local socket = require"socket"
 
+local cached_tangle = {}
+
+local sections = {}
+
+local tangled = {}
+
+local parent = {}
+
+local pending_sections = {}
+
 local server
 
 local client_cos = {}
@@ -218,6 +228,60 @@ function parse_json(str)
   end
 end
 
+function tangle(name, prefix, blacklist)
+  prefix = prefix or ""
+  blacklist = blacklist or {}
+
+  if blacklist[name] then
+    return {}
+  end
+
+  blacklist[name] = true
+
+  if tangled[name] then
+    return tangled[name]
+  end
+
+  if not sections[name] then
+    return {}
+  end
+
+  local lines = {}
+  for _, line in ipairs(sections[name]) do
+    if string.match(line, "^%s*;[^;]") then
+      local _, _, ref_prefix, ref_name = string.find(line, "^(%s*);(.+)$")
+      ref_name = ref_name:match("^%s*(%S+)%s*$")
+      parent[ref_name] = name
+
+
+      local ref_lines = tangle(ref_name, prefix .. ref_prefix, blacklist)
+      for _, ref_line in ipairs(ref_lines) do
+        table.insert(lines, ref_line)
+      end
+
+
+    else
+      table.insert(lines, prefix .. line)
+    end
+
+  end
+  blacklist[name] = nil
+
+  tangled[name] = lines
+  return tangled[name]
+end
+
+function has_parent(name, candidate)
+  if name == candidate then
+    return true
+  end
+
+  if not parent[name] then
+    return false
+  end
+  return has_parent(parent[name], candidate)
+end
+
 
 local dt
 
@@ -257,11 +321,43 @@ function love.draw()
             table.insert(msgs, msg)
           end
 
-          for _, msg in ipairs(msgs) do
-            if msg["cmd"] == "execute" then
+          local msg = msgs[1]
+          if msg["cmd"] == "execute" then
+            msg_data = msg['data']
+
+            local name = msg_data['name']
+            local lines = msg_data['lines']
+            sections[name] = lines
+
+            tangled = {}
+            parent = {}
+
+            for name, _ in pairs(sections) do
+              tangle(name)
             end
+
+            if msg_data['execute'] then
+              if not has_parent(name, "loop") then
+                table.insert(pending_sections, name)
+              end
+
+            end
+
+            cached_tangle = {}
+
+            client:send([[{"status": "done"}]] .. "\n")
+
+          elseif msg["cmd"] == "killLoop" then
+            sections["loop"] = nil
+            tangled["loop"] = nil
+            print("Loop killed")
+
+          else
+            client:send([[{"status": "Unsupported command ]] .. msg['cmd'] .. [["}]] .. "\n")
           end
+
         elseif err == "closed" then
+          print("Client disconnected.")
           break
         end
       end
@@ -281,5 +377,61 @@ function love.draw()
       i = i + 1
     end
   end
+  if #pending_sections > 0 then
+    for _, name in ipairs(pending_sections) do
+      if not cached_tangle[name] then
+        local lines = tangled[name]
+        local f, err = loadstring(table.concat(lines, "\n"))
+        if not f then
+          print("Compile error (" .. name .. "): " .. err)
+          sections[name] = nil
+          tangled[name] = nil
+          cached_tangle[name] = nil
+        else
+          cached_tangle[name] = f
+        end
+
+      end
+
+      if cached_tangle[name] then
+        local succ,err = pcall(cached_tangle[name])
+        if not succ then
+          print("Execute error (" .. name .. "): " .. err)
+          sections[name] = nil
+          tangled[name] = nil
+          cached_tangle[name] = nil
+        end
+      end
+    end
+    pending_sections = {}
+  end
+
+  if tangled['loop'] then
+    local name = "loop"
+    if not cached_tangle[name] then
+      local lines = tangled[name]
+      local f, err = loadstring(table.concat(lines, "\n"))
+      if not f then
+        print("Compile error (" .. name .. "): " .. err)
+        sections[name] = nil
+        tangled[name] = nil
+        cached_tangle[name] = nil
+      else
+        cached_tangle[name] = f
+      end
+
+    end
+
+    if cached_tangle[name] then
+      local succ,err = pcall(cached_tangle[name])
+      if not succ then
+        print("Execute error (" .. name .. "): " .. err)
+        sections[name] = nil
+        tangled[name] = nil
+        cached_tangle[name] = nil
+      end
+    end
+  end
+
 end
 

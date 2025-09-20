@@ -44,8 +44,9 @@ if client then
       local data, err = client:receive()
       if data then
         ; decode string json
-        ; process each command
+        ; process command
       elseif err == "closed" then
+        print("Client disconnected.")
         break
       end
     end

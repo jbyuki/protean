@@ -1,0 +1,48 @@
+;;; server_love2d
+;; run any pending sections
+if #pending_sections > 0 then
+  for _, name in ipairs(pending_sections) do
+    ; cache lines if not done yet
+    ; execute lines from cache
+  end
+  pending_sections = {}
+end
+
+;; run loop section if active
+if tangled['loop'] then
+  local name = "loop"
+  ; cache lines if not done yet
+  ; execute lines from cache
+end
+
+;; variables
+local cached_tangle = {}
+
+;; clear cached lines
+cached_tangle = {}
+
+;; cache lines if not done yet
+if not cached_tangle[name] then
+  local lines = tangled[name]
+  local f, err = loadstring(table.concat(lines, "\n"))
+  if not f then
+    print("Compile error (" .. name .. "): " .. err)
+    sections[name] = nil
+    tangled[name] = nil
+    cached_tangle[name] = nil
+  else
+    cached_tangle[name] = f
+  end
+
+end
+
+;; execute lines from cache
+if cached_tangle[name] then
+  local succ,err = pcall(cached_tangle[name])
+  if not succ then
+    print("Execute error (" .. name .. "): " .. err)
+    sections[name] = nil
+    tangled[name] = nil
+    cached_tangle[name] = nil
+  end
+end

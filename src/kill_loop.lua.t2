@@ -1,0 +1,7 @@
+;;; server_love2d
+;; handle other message commands
+elseif msg["cmd"] == "killLoop" then
+  sections["loop"] = nil
+  tangled["loop"] = nil
+  print("Loop killed")
+

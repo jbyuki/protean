@@ -1,9 +1,134 @@
 ;;; server_love2d
-;; process each command
-for _, msg in ipairs(msgs) do
-  if msg["cmd"] == "execute" then
-    ; add or replace section to database
-    ; retangle all sections
-    ; add or replace sections to running sections
-  end
+;; process command
+local msg = msgs[1]
+if msg["cmd"] == "execute" then
+  msg_data = msg['data']
+
+  ; add or replace section to database
+  ; retangle all sections
+  ; add or replace sections to running sections if execute is true
+  ; clear cached lines
+  ; send success response back
+; handle other message commands
+else
+  ; send unsupported command error back
 end
+
+;; variables
+local sections = {}
+
+;; add or replace section to database
+local name = msg_data['name']
+local lines = msg_data['lines']
+sections[name] = lines
+
+;; variables
+local tangled = {}
+
+;; send success response back
+client:send([[{"status": "done"}]] .. "\n")
+
+;; functions
+function tangle(name, prefix, blacklist)
+  prefix = prefix or ""
+  blacklist = blacklist or {}
+
+  ; if name in blacklist skip
+  ; push name to blacklist
+  ; if already tangled return
+  ; if not in sections return
+  local lines = {}
+  for _, line in ipairs(sections[name]) do
+    ; if line is reference recurse
+    ; otherwise just add the line
+  end
+  ; pop name to blacklist
+  tangled[name] = lines
+  return tangled[name]
+end
+
+;; retangle all sections
+tangled = {}
+; clear parent list
+for name, _ in pairs(sections) do
+  tangle(name)
+end
+
+;; if name in blacklist skip
+if blacklist[name] then
+  return {}
+end
+
+;; push name to blacklist
+blacklist[name] = true
+
+;; pop name to blacklist
+blacklist[name] = nil
+
+;; if already tangled return
+if tangled[name] then
+  return tangled[name]
+end
+
+;; if not in sections return
+if not sections[name] then
+  return {}
+end
+
+;; if line is reference recurse
+if string.match(line, "^%s*;[^;]") then
+  ; extract prefix reference name
+  ; get recursive lines and add them
+
+;; otherwise just add the line
+else
+  table.insert(lines, prefix .. line)
+end
+
+;; extract prefix reference name
+local _, _, ref_prefix, ref_name = string.find(line, "^(%s*);(.+)$")
+ref_name = ref_name:match("^%s*(%S+)%s*$")
+; add to parent list
+
+;; get recursive lines and add them
+local ref_lines = tangle(ref_name, prefix .. ref_prefix, blacklist)
+for _, ref_line in ipairs(ref_lines) do
+  table.insert(lines, ref_line)
+end
+
+;; add or replace sections to running sections if execute is true
+if msg_data['execute'] then
+  ; if parent is not loop add to pending sections
+end
+
+;; variables
+local parent = {}
+
+;; clear parent list
+parent = {}
+
+;; add to parent list
+parent[ref_name] = name
+
+;; functions
+function has_parent(name, candidate)
+  if name == candidate then
+    return true
+  end
+
+  if not parent[name] then
+    return false
+  end
+  return has_parent(parent[name], candidate)
+end
+
+;; variables
+local pending_sections = {}
+
+;; if parent is not loop add to pending sections
+if not has_parent(name, "loop") then
+  table.insert(pending_sections, name)
+end
+
+;; send unsupported command error back
+client:send([[{"status": "Unsupported command ]] .. msg['cmd'] .. [["}]] .. "\n")
