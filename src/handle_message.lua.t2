@@ -3,12 +3,12 @@
 local msg = msgs[1]
 if msg["cmd"] == "execute" then
   msg_data = msg['data']
-
   ; add or replace section to database
   ; retangle all sections
   ; add or replace sections to running sections if execute is true
   ; clear cached lines
   ; send success response back
+
 ; handle other message commands
 else
   ; send unsupported command error back
@@ -26,7 +26,7 @@ sections[name] = lines
 local tangled = {}
 
 ;; send success response back
-client:send([[{"status": "done"}]] .. "\n")
+client:send([[{"status": "Done"}]] .. "\n")
 
 ;; functions
 function tangle(name, prefix, blacklist)
@@ -87,7 +87,7 @@ end
 
 ;; extract prefix reference name
 local _, _, ref_prefix, ref_name = string.find(line, "^(%s*);(.+)$")
-ref_name = ref_name:match("^%s*(%S+)%s*$")
+ref_name = ref_name:match("^%s*(.+)%s*$")
 ; add to parent list
 
 ;; get recursive lines and add them

@@ -250,7 +250,7 @@ function tangle(name, prefix, blacklist)
   for _, line in ipairs(sections[name]) do
     if string.match(line, "^%s*;[^;]") then
       local _, _, ref_prefix, ref_name = string.find(line, "^(%s*);(.+)$")
-      ref_name = ref_name:match("^%s*(%S+)%s*$")
+      ref_name = ref_name:match("^%s*(.+)%s*$")
       parent[ref_name] = name
 
 
@@ -324,7 +324,6 @@ function love.draw()
           local msg = msgs[1]
           if msg["cmd"] == "execute" then
             msg_data = msg['data']
-
             local name = msg_data['name']
             local lines = msg_data['lines']
             sections[name] = lines
@@ -345,7 +344,8 @@ function love.draw()
 
             cached_tangle = {}
 
-            client:send([[{"status": "done"}]] .. "\n")
+            client:send([[{"status": "Done"}]] .. "\n")
+
 
           elseif msg["cmd"] == "killLoop" then
             sections["loop"] = nil
